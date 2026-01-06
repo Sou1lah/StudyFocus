@@ -44,13 +44,18 @@ class StudyTimer {
         
         // Tags elements
         this.tagsDisplay = document.getElementById('tagsDisplay');
-        this.addTagBtn = document.getElementById('addTagBtn');
+        this.tagDropdownBtn = document.getElementById('tagDropdownBtn');
+        this.tagDropdownMenu = document.getElementById('tagDropdownMenu');
+        this.tagMenuItems = document.getElementById('tagMenuItems');
+        this.tagAddOption = document.getElementById('tagAddOption');
+        this.selectedTagText = document.getElementById('selectedTagText');
         this.addTagModal = document.getElementById('addTagModal');
         this.closeAddTagBtn = document.getElementById('closeAddTagBtn');
         this.tagNameInput = document.getElementById('tagNameInput');
         this.createTagBtn = document.getElementById('createTagBtn');
         this.cancelAddTagBtn = document.getElementById('cancelAddTagBtn');
         this.colorOptions = document.querySelectorAll('.color-option');
+        this.selectedTag = null;
     }
 
     attachEventListeners() {
@@ -61,7 +66,8 @@ class StudyTimer {
         this.modeLongBreakBtn.addEventListener('click', () => this.switchMode('longbreak'));
         
         // Tags event listeners
-        this.addTagBtn.addEventListener('click', () => this.openAddTagModal());
+        this.tagDropdownBtn.addEventListener('click', () => this.toggleDropdown());
+        this.tagAddOption.addEventListener('click', () => this.openAddTagModal());
         this.closeAddTagBtn.addEventListener('click', () => this.closeAddTagModal());
         this.cancelAddTagBtn.addEventListener('click', () => this.closeAddTagModal());
         this.createTagBtn.addEventListener('click', () => this.createTag());
@@ -78,12 +84,52 @@ class StudyTimer {
             });
         });
         
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.tag-dropdown-wrapper')) {
+                this.closeDropdown();
+            }
+        });
+        
         // Close modal when clicking outside
         document.addEventListener('click', (e) => {
             if (e.target === this.addTagModal) {
                 this.closeAddTagModal();
             }
         });
+    }
+
+    toggleDropdown() {
+        if (this.tagDropdownMenu.style.display === 'none') {
+            this.openDropdown();
+        } else {
+            this.closeDropdown();
+        }
+    }
+
+    openDropdown() {
+        this.displayTags();
+        this.tagDropdownMenu.style.display = 'block';
+        this.tagDropdownBtn.classList.add('active');
+    }
+
+    closeDropdown() {
+        this.tagDropdownMenu.style.display = 'none';
+        this.tagDropdownBtn.classList.remove('active');
+    }
+
+    openAddTagModal() {
+        this.closeDropdown();
+        this.addTagModal.style.display = 'flex';
+        this.tagNameInput.focus();
+        this.colorOptions[0].classList.add('selected');
+        this.selectedColor = '#3B82F6';
+    }
+
+    closeAddTagModal() {
+        this.addTagModal.style.display = 'none';
+        this.tagNameInput.value = '';
+        this.colorOptions.forEach(opt => opt.classList.remove('selected'));
     }
 
     toggleStartPause() {
@@ -278,23 +324,9 @@ class StudyTimer {
     }
 
     // Tags Methods
-    openAddTagModal() {
-        this.addTagModal.style.display = 'flex';
-        this.tagNameInput.focus();
-        this.colorOptions[0].classList.add('selected');
-        this.selectedColor = '#3B82F6';
-    }
-
-    closeAddTagModal() {
-        this.addTagModal.style.display = 'none';
-        this.tagNameInput.value = '';
-        this.colorOptions.forEach(opt => opt.classList.remove('selected'));
-    }
-
     createTag() {
         const tagName = this.tagNameInput.value.trim();
         if (!tagName) {
-            alert('Please enter a tag name');
             return;
         }
 
@@ -313,34 +345,46 @@ class StudyTimer {
 
     removeTag(tagId) {
         this.tags = this.tags.filter(tag => tag.id !== tagId);
+        if (this.selectedTag && this.selectedTag.id === tagId) {
+            this.selectedTag = null;
+            this.selectedTagText.textContent = 'Select a tag';
+        }
         this.saveTags();
         this.displayTags();
     }
 
     displayTags() {
-        this.tagsDisplay.innerHTML = '';
+        this.tagMenuItems.innerHTML = '';
+        
         if (this.tags.length === 0) {
+            this.selectedTagText.textContent = 'Select a tag';
             return;
         }
 
-        // Display only the last (most recent) tag
-        const tag = this.tags[this.tags.length - 1];
-        const tagElement = document.createElement('div');
-        tagElement.className = 'tag';
-        tagElement.style.backgroundColor = tag.color;
-        tagElement.innerHTML = `
-            ${tag.name}
-            <button class="tag-remove-btn" data-tag-id="${tag.id}">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-
-        tagElement.querySelector('.tag-remove-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.removeTag(tag.id);
+        // Display all tags in dropdown
+        this.tags.forEach(tag => {
+            const menuItem = document.createElement('button');
+            menuItem.className = 'tag-menu-item';
+            menuItem.innerHTML = `
+                <div class="tag-menu-item-color" style="background-color: ${tag.color}"></div>
+                <span>${tag.name}</span>
+            `;
+            menuItem.addEventListener('click', () => {
+                this.selectTag(tag);
+            });
+            this.tagMenuItems.appendChild(menuItem);
         });
+    }
 
-        this.tagsDisplay.appendChild(tagElement);
+    selectTag(tag) {
+        this.selectedTag = tag;
+        this.selectedTagText.innerHTML = `
+            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background-color: ${tag.color};"></div>
+                ${tag.name}
+            </div>
+        `;
+        this.closeDropdown();
     }
 
     saveTags() {

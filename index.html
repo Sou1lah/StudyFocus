@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Ocean Background -->
+    <div class="ocean" id="oceanBg" style="display: none;">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
     
     <div class="main-container">
         <!-- Title -->
@@ -43,12 +48,18 @@
                 <!-- Tags Section -->
                 <div class="tags-section">
                     <div class="tags-container">
-                        <div class="tags-display" id="tagsDisplay"></div>
-                        <input type="text" id="tagNameInput" class="tag-input-inline" placeholder="Tag name..." style="display: none;">
-                        <div class="tag-colors-inline" id="tagColorsInline" style="display: none;"></div>
-                        <button class="add-tag-btn" id="addTagBtn" title="Add a tag">
-                            <i class="fas fa-plus"></i>
-                        </button>
+                        <div class="tag-dropdown-wrapper">
+                            <button class="tag-dropdown-btn" id="tagDropdownBtn">
+                                <span id="selectedTagText">Select a tag</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="tag-dropdown-menu" id="tagDropdownMenu" style="display: none;">
+                                <div class="tag-menu-items" id="tagMenuItems"></div>
+                                <button class="tag-add-option" id="tagAddOption">
+                                    <i class="fas fa-plus"></i> Add Tag
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
