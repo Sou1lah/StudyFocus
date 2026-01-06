@@ -414,14 +414,24 @@ class StudyTimer {
     }
 }
 
+// Initialize global sound state
+window.soundMuted = false;
+
 // Initialize timer when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const timer = new StudyTimer();
+    
+    // Audio variables
+    let currentAudio = null;
+    let currentSound = null;
     
     // Settings modal functionality
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsModal = document.getElementById('settingsModal');
     const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const focusBtn = document.getElementById('focusBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    let isMuted = false;
     const modalTabs = document.querySelectorAll('.modal-tab');
     const presetBtn = document.getElementById('presetDropdownBtn');
     const presetMenu = document.getElementById('presetMenu');
@@ -442,6 +452,19 @@ document.addEventListener('DOMContentLoaded', () => {
             settingsModal.classList.remove('active');
         }
     });
+    
+    // Focus Mode Toggle
+    focusBtn.addEventListener('click', () => {
+        document.body.classList.toggle('focus-mode');
+        focusBtn.classList.toggle('active');
+        muteBtn.style.display = document.body.classList.contains('focus-mode') ? 'flex' : 'none';
+    });
+    
+    // Track which external services were active before muting
+    let wasYouTubePlaying = false;
+    let wasWeatherActive = false;
+    
+    // Mute button functionality will be initialized after focusSceneModal is defined
     
     // Tab switching
     modalTabs.forEach(tab => {
@@ -679,15 +702,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const focusSceneClose = document.getElementById('focusSceneClose');
     const sceneItems = document.querySelectorAll('.scene-item');
 
-    let currentAudio = null;
-    let currentSound = null;
-
     focusSceneClose.addEventListener('click', hideFocusScene);
 
     focusSceneModal.addEventListener('click', (e) => {
         if (e.target === focusSceneModal) {
             hideFocusScene();
         }
+    });
+
+    // Mute button functionality - now that focusSceneModal is defined
+    muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        muteBtn.classList.toggle('muted', isMuted);
+        
+        // Update icon
+        if (isMuted) {
+            muteBtn.querySelector('i').className = 'fas fa-volume-mute';
+            muteBtn.title = 'Unmute Sound';
+        } else {
+            muteBtn.querySelector('i').className = 'fas fa-volume-up';
+            muteBtn.title = 'Mute Sound';
+        }
+        
+        // Mute the current audio element if playing
+        if (currentAudio) {
+            currentAudio.muted = isMuted;
+        }
+        
+        // Handle audio/music muting - mute all audio elements
+        const allAudioElements = document.querySelectorAll('audio');
+        allAudioElements.forEach(audio => {
+            audio.muted = isMuted;
+            if (!isMuted && audio.paused && audio.src) {
+                // Resume playing if it was paused and we're unmuting
+                audio.play().catch(e => console.log('Audio play error:', e));
+            }
+        });
+        
+        // Handle YouTube player (pause/resume)
+        const youtubeIframe = document.querySelector('iframe[src*="youtube"]');
+        if (youtubeIframe) {
+            if (isMuted) {
+                // Check if YouTube is playing and pause it
+                wasYouTubePlaying = true;
+                youtubeIframe.style.opacity = '0.5';
+                // Send pause command to YouTube iframe
+                youtubeIframe.contentWindow.postMessage(
+                    JSON.stringify({ event: 'command', func: 'pauseVideo' }),
+                    '*'
+                );
+            } else if (wasYouTubePlaying) {
+                // Resume YouTube if it was playing
+                youtubeIframe.style.opacity = '1';
+                youtubeIframe.contentWindow.postMessage(
+                    JSON.stringify({ event: 'command', func: 'playVideo' }),
+                    '*'
+                );
+            }
+        }
+        
+        // Handle Weather modal (close if open)
+        if (isMuted && focusSceneModal.classList.contains('active')) {
+            wasWeatherActive = true;
+            hideFocusScene();
+        } else if (!isMuted && wasWeatherActive) {
+            showFocusScene();
+            wasWeatherActive = false;
+        }
+        
+        // Store mute state for music player
+        window.soundMuted = isMuted;
     });
 
     // Sound effects function
@@ -724,6 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAudio.src = soundMap[soundType] || '';
         currentSound = soundType;
         currentAudio.volume = 0.5;
+        currentAudio.muted = window.soundMuted || false;
         currentAudio.play().catch(e => {
             console.log('Audio playback failed:', e);
             // Fallback: show alert if audio fails
