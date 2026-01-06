@@ -13,6 +13,11 @@
         <source src="https://cdn.pixabay.com/video/2023/03/26/156110-811878057_large.mp4" type="video/mp4">
     </video>
     
+    <!-- Rain Background Video -->
+    <video class="rain-video" id="rainVideo" style="display: none;" autoplay muted loop>
+        <source src="https://cdn.pixabay.com/video/2019/10/24/28236-368501609_large.mp4" type="video/mp4">
+    </video>
+    
     <!-- Ocean Waves Background -->
     <div class="ocean" id="oceanBg" style="display: none;">
         <div class="wave"></div>
@@ -260,8 +265,12 @@
                         <span>Waves</span>
                     </button>
                     <button class="background-option" data-bg="ocean">
-                        <div class="bg-preview ocean-preview"></div>
+                        <div class="bg-preview" style="background-image: url('assets/background/ocean.png');"></div>
                         <span>Ocean</span>
+                    </button>
+                    <button class="background-option" data-bg="rain">
+                        <div class="bg-preview" style="background-image: url('assets/background/raindrop.png');"></div>
+                        <span>Rain</span>
                     </button>
                 </div>
             </div>

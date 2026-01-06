@@ -62,6 +62,7 @@ canvas {
     height: 198px;
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
     transform: translate3d(0, 0, 0);
+    animation-play-state: paused;
 }
 
 .wave:nth-of-type(2) {
@@ -108,28 +109,25 @@ canvas {
 
 .brand-title h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 40px;
     font-weight: 700;
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #000;
     display: inline-block;
 }
 
 .github-link {
-    margin-left: 10px;
+    margin-left: 15px;
     display: inline-block;
-    color: #a5b4fc;
-    font-size: 24px;
+    color: #000;
+    font-size: 36px;
     transition: all 0.3s ease;
     text-decoration: none;
     vertical-align: middle;
 }
 
 .github-link:hover {
-    color: #fff;
-    transform: scale(1.1);
+    color: #333;
+    transform: scale(1.15);
 }
 
 /* Top Right Controls */
@@ -295,6 +293,54 @@ body.ocean-video-bg .control-icon-btn {
 }
 
 body.ocean-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Rain Video Background */
+.rain-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.rain-video-bg {
+    background: transparent;
+}
+
+body.rain-video-bg .timer-display,
+body.rain-video-bg .session-info p,
+body.rain-video-bg .brand-title h1,
+body.rain-video-bg .mode-btn,
+body.rain-video-bg .glass-btn,
+body.rain-video-bg .tag-dropdown-btn,
+body.rain-video-bg .todo-list-title,
+body.rain-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.rain-video-bg .mode-btn,
+body.rain-video-bg .glass-btn,
+body.rain-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.rain-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.rain-video-bg .control-icon-btn:hover {
     color: rgba(255, 255, 255, 0.95);
     background: rgba(0, 0, 0, 0.6);
     border-color: rgba(255, 255, 255, 0.5);
@@ -1706,8 +1752,27 @@ p {
 }
 
 .bg-preview.default-bg {
-    background: #141414;
-    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cg%3E%3Ccircle cx="20" cy="20" r="3" fill="%23fff" opacity="0.3"/%3E%3Ccircle cx="80" cy="30" r="2" fill="%23fff" opacity="0.2"/%3E%3Ccircle cx="50" cy="70" r="4" fill="%23fff" opacity="0.25"/%3E%3C/g%3E%3C/svg%3E');
+    background: #000;
+}
+
+/* Tetris - show top part with blocks */
+.background-option[data-bg="tetris"] .bg-preview {
+    background-position: center top !important;
+}
+
+/* Waves - show top part */
+.background-option[data-bg="waves"] .bg-preview {
+    background-position: center top !important;
+}
+
+/* Ocean - show top part */
+.background-option[data-bg="ocean"] .bg-preview {
+    background-position: center top !important;
+}
+
+/* Rain - show top part */
+.background-option[data-bg="rain"] .bg-preview {
+    background-position: center top !important;
 }
 
 /* Focus Scene Modal */

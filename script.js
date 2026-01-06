@@ -535,6 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Background functionality
     const oceanBg = document.getElementById('oceanBg');
     const oceanVideo = document.getElementById('oceanVideo');
+    const rainVideo = document.getElementById('rainVideo');
     const backgroundModal = document.getElementById('backgroundModal');
     const backgroundModalClose = document.getElementById('backgroundModalClose');
     const backgroundBtn = document.getElementById('backgroundBtn');
@@ -564,25 +565,58 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset all backgrounds
         oceanBg.style.display = 'none';
         oceanVideo.style.display = 'none';
-        document.body.classList.remove('ocean-bg', 'ocean-video-bg');
+        rainVideo.style.display = 'none';
+        document.body.classList.remove('ocean-bg', 'ocean-video-bg', 'rain-video-bg');
         document.body.style.backgroundImage = 'none';
+        
+        // Stop tetris background
+        hideTetrisBackground();
+        
+        // Pause ocean video
+        if (oceanVideo) {
+            oceanVideo.pause();
+            oceanVideo.currentTime = 0;
+        }
+        
+        // Pause rain video
+        if (rainVideo) {
+            rainVideo.pause();
+            rainVideo.currentTime = 0;
+        }
+        
+        // Stop wave animations
+        const waves = document.querySelectorAll('.wave');
+        waves.forEach(wave => {
+            wave.style.animationPlayState = 'paused';
+        });
         
         if (bgType === 'default') {
             // Default: just black screen
-            hideTetrisBackground();
         } else if (bgType === 'tetris') {
-            // Tetris: tetris blocks
+            // Tetris: tetris blocks - start animation
             showTetrisBackground();
         } else if (bgType === 'waves') {
             // Waves: animated ocean waves with light gradient
-            hideTetrisBackground();
             oceanBg.style.display = 'block';
             document.body.classList.add('ocean-bg');
+            // Resume wave animations
+            waves.forEach(wave => {
+                wave.style.animationPlayState = 'running';
+            });
         } else if (bgType === 'ocean') {
-            // Ocean video background
-            hideTetrisBackground();
+            // Ocean video background - start playing
             document.body.classList.add('ocean-video-bg');
             oceanVideo.style.display = 'block';
+            oceanVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'rain') {
+            // Rain video background - start playing
+            document.body.classList.add('rain-video-bg');
+            rainVideo.style.display = 'block';
+            rainVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
         }
         
         updateBackgroundUI();

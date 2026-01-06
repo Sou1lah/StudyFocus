@@ -188,26 +188,29 @@ Tetris.prototype.init = function(){
 Tetris.prototype.update = function() {
     var curPiece = this.curPiece;
 
-   if (!this.checkMovement(curPiece, 0, 1)) {
-       if (curPiece.y < -1) {
-           // you lose
-           this.loseScreen();
-           return true;
-       } else {
-           this.fillBoard(curPiece);
-           this.newTetromino();
-       }
-   } else {
-       if (Date.now() > this.lastMove) {
-           this.lastMove = Date.now() + this.curSpeed;
-           if (this.checkMovement(curPiece, 0, 1)) {
-               curPiece.y++;
+    // Only update logic if tetris animation is running
+    if (tetrisAnimationRunning) {
+       if (!this.checkMovement(curPiece, 0, 1)) {
+           if (curPiece.y < -1) {
+               // you lose
+               this.loseScreen();
+               return true;
            } else {
                this.fillBoard(curPiece);
                this.newTetromino();
            }
+       } else {
+           if (Date.now() > this.lastMove) {
+               this.lastMove = Date.now() + this.curSpeed;
+               if (this.checkMovement(curPiece, 0, 1)) {
+                   curPiece.y++;
+               } else {
+                   this.fillBoard(curPiece);
+                   this.newTetromino();
+               }
+           }
        }
-   }
+    }
 
    this.render();
 
@@ -444,8 +447,12 @@ for(var w = 0; w < boards; w++){
   tetrisInstances.push(new Tetris(20 * Math.round((w*bWidth)/20), 0, bWidth));
 }
 
+// Global flag to control tetris animation
+var tetrisAnimationRunning = false;
+
 // Functions to show/hide tetris background
 function hideTetrisBackground() {
+    tetrisAnimationRunning = false;
     var canvases = document.querySelectorAll('canvas');
     canvases.forEach(function(canvas) {
         canvas.style.display = 'none';
@@ -453,6 +460,7 @@ function hideTetrisBackground() {
 }
 
 function showTetrisBackground() {
+    tetrisAnimationRunning = true;
     var canvases = document.querySelectorAll('canvas');
     canvases.forEach(function(canvas) {
         canvas.style.display = 'block';
