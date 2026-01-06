@@ -13,6 +13,9 @@
         <!-- Title -->
         <div class="brand-title">
             <h1>StudyFocus</h1>
+            <a href="https://github.com/Sou1lah" target="_blank" class="github-link" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
         </div>
         
         <!-- Top Right Controls -->
@@ -35,6 +38,18 @@
             </button>
             <div class="content">
                 <div class="header-section">
+                </div>
+
+                <!-- Tags Section -->
+                <div class="tags-section">
+                    <div class="tags-container">
+                        <div class="tags-display" id="tagsDisplay"></div>
+                        <input type="text" id="tagNameInput" class="tag-input-inline" placeholder="Tag name..." style="display: none;">
+                        <div class="tag-colors-inline" id="tagColorsInline" style="display: none;"></div>
+                        <button class="add-tag-btn" id="addTagBtn" title="Add a tag">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="mode-section">
@@ -68,7 +83,47 @@
                     </button>
                 </div>
 
+                <!-- Todo List Display -->
+                <div class="todo-list-container" id="todoListContainer">
+                    <div class="todo-list-header">
+                        <h3 class="todo-list-title">Todo List</h3>
+                        <button class="todo-add-quick-btn" id="todoAddQuickBtn" title="Add a task">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="todo-list" id="todoList"></div>
+                </div>
+
                 <div class="footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Tag Modal -->
+    <div class="modal" id="addTagModal">
+        <div class="modal-content" style="width: 300px;">
+            <div class="modal-header">
+                <h2>Add Tag</h2>
+                <button class="modal-close" id="closeAddTagBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="tagNameInput" class="tag-input" placeholder="Tag Name" maxlength="20">
+                <div class="tag-colors">
+                    <button class="color-option" data-color="#3B82F6" style="background-color: #3B82F6;" title="Blue"></button>
+                    <button class="color-option" data-color="#EF4444" style="background-color: #EF4444;" title="Red"></button>
+                    <button class="color-option" data-color="#10B981" style="background-color: #10B981;" title="Green"></button>
+                    <button class="color-option" data-color="#F59E0B" style="background-color: #F59E0B;" title="Orange"></button>
+                    <button class="color-option" data-color="#8B5CF6" style="background-color: #8B5CF6;" title="Purple"></button>
+                    <button class="color-option" data-color="#EC4899" style="background-color: #EC4899;" title="Pink"></button>
+                    <button class="color-option" data-color="#06B6D4" style="background-color: #06B6D4;" title="Cyan"></button>
+                    <button class="color-option" data-color="#14B8A6" style="background-color: #14B8A6;" title="Teal"></button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="glass-btn btn-cancel" id="cancelAddTagBtn">Cancel</button>
+                <button class="glass-btn btn-create" id="createTagBtn">Create</button>
             </div>
         </div>
     </div>
@@ -169,6 +224,28 @@
             <h2>Coming Soon</h2>
             <p>This feature will be available soon!</p>
             <button class="coming-soon-close" id="comingSoonClose">Close</button>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="task-input-modal" id="taskInputModal">
+        <div class="task-input-content">
+            <div class="task-input-header">
+                <h2>Add a Task</h2>
+                <button class="task-input-close" id="taskInputClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="task-input-body">
+                <div id="taskMaxMessage" style="display: none; color: #fca5a5; margin-bottom: 15px; font-size: 14px; text-align: center;">
+                    Maximum 3 tasks reached. Delete a task to add another.
+                </div>
+                <input type="text" id="taskInputField" class="task-input-field" placeholder="Enter task (max 50 characters)" maxlength="50" autofocus>
+                <div class="task-input-buttons">
+                    <button class="task-input-submit" id="taskInputSubmit">Add Task</button>
+                    <button class="task-input-cancel" id="taskInputCancel">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -13,11 +13,17 @@ class StudyTimer {
         this.sessionCount = 0;
         this.totalFocusTime = 0;
         this.timerInterval = null;
+        
+        // Tags initialization
+        this.tags = [];
+        this.selectedColor = '#3B82F6';
 
         this.initializeElements();
         this.attachEventListeners();
         this.updateDisplay();
         this.loadStats();
+        this.loadTags();
+        this.displayTags();
     }
 
     initializeElements() {
@@ -35,6 +41,16 @@ class StudyTimer {
             document.getElementById('dot2'),
             document.getElementById('dot3')
         ];
+        
+        // Tags elements
+        this.tagsDisplay = document.getElementById('tagsDisplay');
+        this.addTagBtn = document.getElementById('addTagBtn');
+        this.addTagModal = document.getElementById('addTagModal');
+        this.closeAddTagBtn = document.getElementById('closeAddTagBtn');
+        this.tagNameInput = document.getElementById('tagNameInput');
+        this.createTagBtn = document.getElementById('createTagBtn');
+        this.cancelAddTagBtn = document.getElementById('cancelAddTagBtn');
+        this.colorOptions = document.querySelectorAll('.color-option');
     }
 
     attachEventListeners() {
@@ -43,6 +59,31 @@ class StudyTimer {
         this.modeStudyBtn.addEventListener('click', () => this.switchMode('study'));
         this.modeBreakBtn.addEventListener('click', () => this.switchMode('break'));
         this.modeLongBreakBtn.addEventListener('click', () => this.switchMode('longbreak'));
+        
+        // Tags event listeners
+        this.addTagBtn.addEventListener('click', () => this.openAddTagModal());
+        this.closeAddTagBtn.addEventListener('click', () => this.closeAddTagModal());
+        this.cancelAddTagBtn.addEventListener('click', () => this.closeAddTagModal());
+        this.createTagBtn.addEventListener('click', () => this.createTag());
+        this.tagNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.createTag();
+        });
+        
+        // Color selection
+        this.colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                this.colorOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                this.selectedColor = option.dataset.color;
+            });
+        });
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target === this.addTagModal) {
+                this.closeAddTagModal();
+            }
+        });
     }
 
     toggleStartPause() {
@@ -127,9 +168,9 @@ class StudyTimer {
 
     updateSessionStatus() {
         const modeLabels = {
-            study: '📚 Studying',
-            break: '☕ Taking a break',
-            longbreak: '🌟 Long break time'
+            study: 'Studying',
+            break: 'Taking a break',
+            longbreak: 'Long break time'
         };
 
         if (this.isRunning) {
@@ -234,6 +275,83 @@ class StudyTimer {
             }
         }
         this.updateStats();
+    }
+
+    // Tags Methods
+    openAddTagModal() {
+        this.addTagModal.style.display = 'flex';
+        this.tagNameInput.focus();
+        this.colorOptions[0].classList.add('selected');
+        this.selectedColor = '#3B82F6';
+    }
+
+    closeAddTagModal() {
+        this.addTagModal.style.display = 'none';
+        this.tagNameInput.value = '';
+        this.colorOptions.forEach(opt => opt.classList.remove('selected'));
+    }
+
+    createTag() {
+        const tagName = this.tagNameInput.value.trim();
+        if (!tagName) {
+            alert('Please enter a tag name');
+            return;
+        }
+
+        const tag = {
+            id: Date.now(),
+            name: tagName,
+            color: this.selectedColor,
+            createdAt: new Date().toISOString()
+        };
+
+        this.tags.push(tag);
+        this.saveTags();
+        this.displayTags();
+        this.closeAddTagModal();
+    }
+
+    removeTag(tagId) {
+        this.tags = this.tags.filter(tag => tag.id !== tagId);
+        this.saveTags();
+        this.displayTags();
+    }
+
+    displayTags() {
+        this.tagsDisplay.innerHTML = '';
+        if (this.tags.length === 0) {
+            return;
+        }
+
+        // Display only the last (most recent) tag
+        const tag = this.tags[this.tags.length - 1];
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.style.backgroundColor = tag.color;
+        tagElement.innerHTML = `
+            ${tag.name}
+            <button class="tag-remove-btn" data-tag-id="${tag.id}">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        tagElement.querySelector('.tag-remove-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.removeTag(tag.id);
+        });
+
+        this.tagsDisplay.appendChild(tagElement);
+    }
+
+    saveTags() {
+        localStorage.setItem('studyTags', JSON.stringify(this.tags));
+    }
+
+    loadTags() {
+        const savedTags = localStorage.getItem('studyTags');
+        if (savedTags) {
+            this.tags = JSON.parse(savedTags);
+        }
     }
 }
 
@@ -458,4 +576,145 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mark "None" as active initially
     document.getElementById('sceneNone').classList.add('active');
+
+    // Todo List functionality
+    const todoAddQuickBtn = document.getElementById('todoAddQuickBtn');
+    const taskInputModal = document.getElementById('taskInputModal');
+    const taskInputClose = document.getElementById('taskInputClose');
+    const taskInputCancel = document.getElementById('taskInputCancel');
+    const taskInputField = document.getElementById('taskInputField');
+    const taskInputSubmit = document.getElementById('taskInputSubmit');
+    const MAX_TODOS = 3;
+
+    // Load todos from localStorage
+    const loadTodos = () => {
+        const saved = localStorage.getItem('studyTodos');
+        return saved ? JSON.parse(saved) : [];
+    };
+
+    // Save todos to localStorage
+    const saveTodos = (todos) => {
+        localStorage.setItem('studyTodos', JSON.stringify(todos));
+    };
+
+    let todos = loadTodos();
+
+    // Show task input modal
+    const showTaskModal = () => {
+        todos = loadTodos(); // Reload todos from localStorage
+        taskInputModal.classList.add('active');
+        taskInputField.value = '';
+        taskInputField.focus();
+        
+        const taskMaxMessage = document.getElementById('taskMaxMessage');
+        
+        // Update submit button state and message
+        if (todos.length >= MAX_TODOS) {
+            taskInputSubmit.disabled = true;
+            taskInputSubmit.textContent = 'Max Tasks Reached';
+            taskMaxMessage.style.display = 'block';
+            taskInputField.disabled = true;
+        } else {
+            taskInputSubmit.disabled = false;
+            taskInputSubmit.textContent = 'Save';
+            taskMaxMessage.style.display = 'none';
+            taskInputField.disabled = false;
+        }
+    };
+
+    // Display todos on the card
+    const displayTodos = () => {
+        const todoListContainer = document.getElementById('todoListContainer');
+        const todoList = document.getElementById('todoList');
+        
+        // Always show the container
+        todoListContainer.style.display = 'block';
+        
+        if (todos.length === 0) {
+            todoList.innerHTML = '<div style="text-align: center; color: rgba(255, 255, 255, 0.4); padding: 20px; font-size: 14px;">No tasks yet. Click + to add one!</div>';
+            return;
+        }
+        
+        todoList.innerHTML = '';
+        
+        todos.forEach((todo, index) => {
+            const todoItem = document.createElement('div');
+            todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+            
+            todoItem.innerHTML = `
+                <span class="todo-item-text">${todo.text}</span>
+                <button class="todo-item-delete" data-index="${index}">Delete</button>
+            `;
+            
+            todoList.appendChild(todoItem);
+        });
+        
+        // Add delete listeners
+        document.querySelectorAll('.todo-item-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                todos.splice(index, 1);
+                saveTodos(todos);
+                displayTodos();
+            });
+        });
+    };
+
+    // Hide task input modal
+    const hideTaskModal = () => {
+        taskInputModal.classList.remove('active');
+        taskInputField.value = '';
+        displayTodos(); // Refresh display when modal closes
+    };
+
+    // Add task from modal
+    const addTaskFromModal = () => {
+        if (todos.length >= MAX_TODOS) {
+            return;
+        }
+
+        const text = taskInputField.value.trim();
+        if (!text) {
+            alert('Please enter a task!');
+            return;
+        }
+
+        todos.push({ text, completed: false });
+        saveTodos(todos);
+        hideTaskModal();
+    };
+
+    // Clear all tasks
+    const clearAllTasks = () => {
+        if (confirm('Are you sure you want to delete all tasks?')) {
+            todos = [];
+            saveTodos(todos);
+            hideTaskModal();
+        }
+    };
+
+    // Event listeners
+    todoAddQuickBtn.addEventListener('click', showTaskModal);
+    taskInputClose.addEventListener('click', hideTaskModal);
+    taskInputCancel.addEventListener('click', hideTaskModal);
+    taskInputSubmit.addEventListener('click', addTaskFromModal);
+
+    // Enter key to submit
+    taskInputField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !taskInputSubmit.disabled) {
+            addTaskFromModal();
+        }
+    });
+
+    // Close modal when clicking outside
+    taskInputModal.addEventListener('click', (e) => {
+        if (e.target === taskInputModal) {
+            hideTaskModal();
+        }
+    });
+
+    // Initialize - clear any stuck tasks on page load
+    localStorage.removeItem('studyTodos');
+    todos = [];
+    displayTodos();
 });
