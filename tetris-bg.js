@@ -443,3 +443,19 @@ var width = window.innerWidth,
 for(var w = 0; w < boards; w++){
   tetrisInstances.push(new Tetris(20 * Math.round((w*bWidth)/20), 0, bWidth));
 }
+
+// Functions to show/hide tetris background
+function hideTetrisBackground() {
+    var canvases = document.querySelectorAll('canvas');
+    canvases.forEach(function(canvas) {
+        canvas.style.display = 'none';
+    });
+}
+
+function showTetrisBackground() {
+    var canvases = document.querySelectorAll('canvas');
+    canvases.forEach(function(canvas) {
+        canvas.style.display = 'block';
+    });
+}
+

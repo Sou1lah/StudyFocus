@@ -368,10 +368,25 @@ class StudyTimer {
             menuItem.innerHTML = `
                 <div class="tag-menu-item-color" style="background-color: ${tag.color}"></div>
                 <span>${tag.name}</span>
+                <button class="tag-delete-btn" data-tag-id="${tag.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
             `;
-            menuItem.addEventListener('click', () => {
+            
+            // Click on tag to select it
+            const textSpan = menuItem.querySelector('span');
+            textSpan.addEventListener('click', (e) => {
+                e.stopPropagation();
                 this.selectTag(tag);
             });
+            
+            // Delete button
+            const deleteBtn = menuItem.querySelector('.tag-delete-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeTag(tag.id);
+            });
+            
             this.tagMenuItems.appendChild(menuItem);
         });
     }
@@ -517,11 +532,86 @@ document.addEventListener('DOMContentLoaded', () => {
             hideMusicModal();
         }
     });
-
-    // Coming Soon Modal functionality for Background and Weather
-    const comingSoonModal = document.getElementById('comingSoonModal');
+    // Background functionality
+    const oceanBg = document.getElementById('oceanBg');
+    const oceanVideo = document.getElementById('oceanVideo');
+    const backgroundModal = document.getElementById('backgroundModal');
+    const backgroundModalClose = document.getElementById('backgroundModalClose');
     const backgroundBtn = document.getElementById('backgroundBtn');
+    const backgroundOptions = document.querySelectorAll('.background-option');
+    let currentBackground = localStorage.getItem('selectedBg') || 'default';
+
+    const showBackgroundModal = () => {
+        backgroundModal.classList.add('active');
+        updateBackgroundUI();
+    };
+
+    const hideBackgroundModal = () => {
+        backgroundModal.classList.remove('active');
+    };
+
+    const updateBackgroundUI = () => {
+        backgroundOptions.forEach(option => {
+            const bg = option.dataset.bg;
+            option.classList.toggle('active', bg === currentBackground);
+        });
+    };
+
+    const selectBackground = (bgType) => {
+        currentBackground = bgType;
+        localStorage.setItem('selectedBg', bgType);
+        
+        // Reset all backgrounds
+        oceanBg.style.display = 'none';
+        oceanVideo.style.display = 'none';
+        document.body.classList.remove('ocean-bg', 'ocean-video-bg');
+        document.body.style.backgroundImage = 'none';
+        
+        if (bgType === 'default') {
+            // Default: just black screen
+            hideTetrisBackground();
+        } else if (bgType === 'tetris') {
+            // Tetris: tetris blocks
+            showTetrisBackground();
+        } else if (bgType === 'waves') {
+            // Waves: animated ocean waves with light gradient
+            hideTetrisBackground();
+            oceanBg.style.display = 'block';
+            document.body.classList.add('ocean-bg');
+        } else if (bgType === 'ocean') {
+            // Ocean video background
+            hideTetrisBackground();
+            document.body.classList.add('ocean-video-bg');
+            oceanVideo.style.display = 'block';
+        }
+        
+        updateBackgroundUI();
+    };
+
+    // Load saved background preference
+    selectBackground(currentBackground);
+
+    backgroundBtn.addEventListener('click', showBackgroundModal);
+    backgroundModalClose.addEventListener('click', hideBackgroundModal);
+    
+    backgroundOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            selectBackground(option.dataset.bg);
+        });
+    });
+
+    // Close background modal when clicking outside
+    backgroundModal.addEventListener('click', (e) => {
+        if (e.target === backgroundModal) {
+            hideBackgroundModal();
+        }
+    });
+    
+    // Weather button
     const weatherBtn = document.getElementById('weatherBtn');
+    
+    // Coming Soon Modal functionality for Weather
+    const comingSoonModal = document.getElementById('comingSoonModal');
     const comingSoonClose = document.getElementById('comingSoonClose');
     const focusSceneModal = document.getElementById('focusSceneModal');
 
@@ -541,7 +631,6 @@ document.addEventListener('DOMContentLoaded', () => {
         focusSceneModal.classList.remove('active');
     };
 
-    backgroundBtn.addEventListener('click', showComingSoon);
     weatherBtn.addEventListener('click', showFocusScene);
     comingSoonClose.addEventListener('click', hideComingSoon);
 
