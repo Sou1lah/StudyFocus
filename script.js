@@ -392,8 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Focus Scene Modal functionality
     const focusSceneClose = document.getElementById('focusSceneClose');
-    const focusSceneTabs = document.querySelectorAll('.focus-scene-tab');
-    const sceneTabContents = document.querySelectorAll('.scene-tab-content');
     const sceneItems = document.querySelectorAll('.scene-item');
 
     let currentAudio = null;
@@ -405,17 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === focusSceneModal) {
             hideFocusScene();
         }
-    });
-
-    // Tab switching
-    focusSceneTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabName = tab.dataset.tab;
-            focusSceneTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            sceneTabContents.forEach(content => content.classList.remove('active'));
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-        });
     });
 
     // Sound effects function
@@ -438,15 +425,15 @@ document.addEventListener('DOMContentLoaded', () => {
             currentAudio.crossOrigin = "anonymous";
         }
 
-        // Map sounds to Mixkit URLs
+        // Map sounds to local assets
         const soundMap = {
-            'rain': 'https://assets.mixkit.co/active_storage/sfx/2380/2380-preview.mp3',
-            'heavy-rain': 'https://assets.mixkit.co/active_storage/sfx/2389/2389-preview.mp3',
-            'wind': 'https://assets.mixkit.co/active_storage/sfx/2424/2424-preview.mp3',
-            'waves': 'https://assets.mixkit.co/active_storage/sfx/2425/2425-preview.mp3',
-            'birds': 'https://assets.mixkit.co/active_storage/sfx/2437/2437-preview.mp3',
-            'thunder': 'https://assets.mixkit.co/active_storage/sfx/2419/2419-preview.mp3',
-            'night': 'https://assets.mixkit.co/active_storage/sfx/2469/2469-preview.mp3'
+            'rain': 'assets/mixkit-light-rain-loop-2393.wav',
+            'heavy-rain': 'assets/mixkit-heavy-rain-drops-2399.wav',
+            'wind': 'assets/mixkit-wind-blowing-ambience-2658.wav',
+            'waves': 'assets/mixkit-small-waves-harbor-rocks-1208.wav',
+            'birds': 'assets/mixkit-little-birds-singing-in-the-trees-17.wav',
+            'thunder': 'assets/mixkit-rain-and-thunder-storm-2390.wav',
+            'night': 'assets/mixkit-night-forest-with-insects-2414.wav'
         };
 
         currentAudio.src = soundMap[soundType] || '';
@@ -455,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAudio.play().catch(e => {
             console.log('Audio playback failed:', e);
             // Fallback: show alert if audio fails
-            alert('Unable to load sound. Please check your internet connection.');
+            alert('Unable to load sound. Please check if audio files are available.');
         });
     };
 
