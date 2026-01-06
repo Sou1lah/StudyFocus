@@ -6,6 +6,7 @@
     <title>StudyFocus - Focus Timer</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
     <!-- Ocean Background Video -->
@@ -16,6 +17,11 @@
     <!-- Rain Background Video -->
     <video class="rain-video" id="rainVideo" style="display: none;" autoplay muted loop>
         <source src="https://cdn.pixabay.com/video/2019/10/24/28236-368501609_large.mp4" type="video/mp4">
+    </video>
+    
+    <!-- Sea Background Video -->
+    <video class="sea-video" id="seaVideo" style="display: none;" autoplay muted loop>
+        <source src="https://cdn.pixabay.com/video/2021/04/15/71122-537102350_large.mp4" type="video/mp4">
     </video>
     
     <!-- Ocean Waves Background -->
@@ -35,6 +41,9 @@
         
         <!-- Top Right Controls -->
         <div class="top-right-controls">
+            <button class="control-icon-btn" id="statsBtn" title="Study Stats">
+                <i class="fas fa-chart-bar"></i>
+            </button>
             <button class="control-icon-btn" id="musicBtn" title="Music">
                 <i class="fas fa-music"></i>
             </button>
@@ -151,6 +160,43 @@
             <div class="modal-footer">
                 <button class="glass-btn btn-cancel" id="cancelAddTagBtn">Cancel</button>
                 <button class="glass-btn btn-create" id="createTagBtn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content" style="width: 800px; max-width: 90vw;">
+            <div class="modal-header">
+                <h2>Study Stats</h2>
+                <button class="modal-close" id="closeStatsBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="stats-tabs">
+                <button class="stats-tab active" data-tab="today">Today</button>
+                <button class="stats-tab" data-tab="total">Total</button>
+            </div>
+            <div class="modal-body">
+                <div id="todayStatsContainer" class="stats-tab-content active">
+                    <div class="stats-window-title">Today's Stat</div>
+                    <div id="todayChartContainer" style="position: relative; height: 300px; width: 100%; margin-bottom: 20px; padding: 10px 0;">
+                        <canvas id="todayChart" width="400" height="300"></canvas>
+                    </div>
+                    <div id="todayStatsContent"></div>
+                </div>
+                <div id="totalStatsContainer" class="stats-tab-content">
+                    <div class="stats-window-title">Total Stat</div>
+                    <div id="totalStatsContent">
+                        <!-- Stats cards will be populated here -->
+                    </div>
+                    <div id="heatmapSection" style="margin-top: 30px;">
+                        <h3 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-fire"></i> Heatmap
+                        </h3>
+                        <div id="heatmapContent"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -277,6 +323,10 @@
                     <button class="background-option" data-bg="rain">
                         <div class="bg-preview" style="background-image: url('assets/background/raindrop.png');"></div>
                         <span>Rain</span>
+                    </button>
+                    <button class="background-option" data-bg="sea">
+                        <div class="bg-preview" style="background-image: url('assets/background/sea.png');"></div>
+                        <span>Sea</span>
                     </button>
                 </div>
             </div>

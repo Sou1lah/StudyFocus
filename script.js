@@ -17,6 +17,7 @@ class StudyTimer {
         // Tags initialization
         this.tags = [];
         this.selectedColor = '#3B82F6';
+        this.sessionData = []; // Track sessions by tag
 
         this.initializeElements();
         this.attachEventListeners();
@@ -24,6 +25,7 @@ class StudyTimer {
         this.loadStats();
         this.loadTags();
         this.displayTags();
+        this.loadSessionData();
     }
 
     initializeElements() {
@@ -241,6 +243,12 @@ class StudyTimer {
         if (this.currentMode === 'study') {
             this.sessionCount++;
             this.totalFocusTime += this.modes.study;
+            
+            // Track session by tag
+            if (this.selectedTag) {
+                this.trackSessionByTag(this.selectedTag.id, this.modes.study);
+            }
+            
             this.showNotification('Great work! Take a break now.');
             this.switchMode('break');
         } else {
@@ -412,6 +420,74 @@ class StudyTimer {
             this.tags = JSON.parse(savedTags);
         }
     }
+
+    trackSessionByTag(tagId, timeInSeconds) {
+        const today = new Date().toDateString();
+        
+        // Find existing entry for this tag and date
+        let entry = this.sessionData.find(
+            session => session.tagId === tagId && session.date === today
+        );
+        
+        if (entry) {
+            entry.totalTime += timeInSeconds;
+        } else {
+            entry = {
+                tagId: tagId,
+                date: today,
+                totalTime: timeInSeconds
+            };
+            this.sessionData.push(entry);
+        }
+        
+        this.saveSessionData();
+    }
+
+    saveSessionData() {
+        localStorage.setItem('sessionData', JSON.stringify(this.sessionData));
+    }
+
+    loadSessionData() {
+        const saved = localStorage.getItem('sessionData');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                this.sessionData = Array.isArray(data) ? data : [];
+            } catch (e) {
+                console.error('Error loading session data:', e);
+                this.sessionData = [];
+            }
+        }
+    }
+
+    getTodaysSessions() {
+        const today = new Date().toDateString();
+        return this.sessionData.filter(session => {
+            const sessionDate = new Date(session.date).toDateString();
+            return sessionDate === today;
+        });
+    }
+
+    getStudyStatsByTag() {
+        const stats = {};
+        const todaysSessions = this.getTodaysSessions();
+        
+        todaysSessions.forEach(session => {
+            const tag = this.tags.find(t => t.id === session.tagId);
+            if (tag) {
+                if (!stats[tag.id]) {
+                    stats[tag.id] = {
+                        name: tag.name,
+                        color: tag.color,
+                        totalTime: 0
+                    };
+                }
+                stats[tag.id].totalTime += session.totalTime;
+            }
+        });
+        
+        return Object.values(stats).sort((a, b) => b.totalTime - a.totalTime);
+    }
 }
 
 // Initialize global sound state
@@ -450,6 +526,346 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
             settingsModal.classList.remove('active');
+        }
+    });
+    
+    // Stats Modal functionality
+    const statsBtn = document.getElementById('statsBtn');
+    const statsModal = document.getElementById('statsModal');
+    const closeStatsBtn = document.getElementById('closeStatsBtn');
+    const todayStatsContainer = document.getElementById('todayStatsContainer');
+    const totalStatsContainer = document.getElementById('totalStatsContainer');
+    const todayStatsContent = document.getElementById('todayStatsContent');
+    const totalStatsContent = document.getElementById('totalStatsContent');
+    const statsTabs = document.querySelectorAll('.stats-tab');
+
+    const showStatsModal = () => {
+        updateStatsDisplay();
+        statsModal.classList.add('active');
+    };
+
+    const hideStatsModal = () => {
+        statsModal.classList.remove('active');
+    };
+
+    const updateStatsDisplay = () => {
+        // Update today's stats
+        const stats = timer.getStudyStatsByTag();
+        
+        // Create hourly chart data
+        const hourlyData = getHourlyStudyData();
+        
+        // Use setTimeout to ensure DOM is ready
+        setTimeout(() => {
+            displayHourlyChart(hourlyData);
+        }, 100);
+        
+        if (stats.length === 0) {
+            todayStatsContent.innerHTML = '<p style="text-align: center; color: #999; margin-top: 20px;">No study sessions yet today</p>';
+        } else {
+            todayStatsContent.innerHTML = stats.map(stat => {
+                const hours = Math.floor(stat.totalTime / 3600);
+                const minutes = Math.floor((stat.totalTime % 3600) / 60);
+                const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                
+                return `
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${stat.color};"></div>
+                            <span style="font-weight: 500;">${stat.name}</span>
+                        </div>
+                        <span style="color: #aaa;">${timeStr}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Total stats - display stats cards and heatmap
+        displayTotalStats();
+    };
+
+    const displayTotalStats = () => {
+        const totalHours = Math.floor(timer.totalFocusTime / 3600);
+        const totalMinutes = Math.floor((timer.totalFocusTime % 3600) / 60);
+        const sessionCount = timer.sessionCount || 0;
+        
+        // Create stats cards HTML
+        const statsCardsHTML = `
+            <div class="stats-grid">
+                <div class="stats-card" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                    <div class="stats-card-label">Current Streak</div>
+                    <div class="stats-card-value">1</div>
+                    <div class="stats-card-unit">DAY</div>
+                </div>
+                <div class="stats-card" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                    <div class="stats-card-label">Best Streak</div>
+                    <div class="stats-card-value">1</div>
+                    <div class="stats-card-unit">DAY</div>
+                </div>
+                <div class="stats-card" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%);">
+                    <div class="stats-card-label">Total hours</div>
+                    <div class="stats-card-value">${totalHours}h ${totalMinutes}m</div>
+                    <div class="stats-card-unit plus-badge">
+                        <i class="fas fa-plus"></i> Plus
+                    </div>
+                </div>
+                <div class="stats-card" style="background: linear-gradient(135deg, #A855F7 0%, #D946EF 100%);">
+                    <div class="stats-card-label">Pomodoros<br>Completed</div>
+                    <div class="stats-card-value">${sessionCount}</div>
+                </div>
+                <div class="stats-card" style="background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);">
+                    <div class="stats-card-label">This Week</div>
+                    <div class="stats-card-value">${sessionCount}</div>
+                    <div class="stats-card-unit">POMODOROS</div>
+                </div>
+                <div class="stats-card" style="background: linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%);">
+                    <div class="stats-card-label">Daily average</div>
+                    <div class="stats-card-value">0h 0m</div>
+                    <div class="stats-card-unit plus-badge">
+                        <i class="fas fa-plus"></i> Plus
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        totalStatsContent.innerHTML = statsCardsHTML;
+        
+        // Generate and display heatmap
+        displayHeatmap();
+    };
+
+    const displayHeatmap = () => {
+        const heatmapContent = document.getElementById('heatmapContent');
+        
+        if (!heatmapContent) return;
+        
+        const daysPerWeek = 7;
+        const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        const weeksCount = 26;
+        const weeksPerMonth = 4;
+        
+        // Generate activity data for last 26 weeks
+        const activityData = {};
+        timer.sessionData.forEach(session => {
+            const date = new Date(session.date);
+            const dateStr = date.toDateString();
+            const day = date.getDay();
+            
+            const key = `${dateStr}-${day}`;
+            if (!activityData[key]) {
+                activityData[key] = 0;
+            }
+            
+            if (session.endTime) {
+                const duration = (session.endTime - session.date) / 1000 / 60;
+                activityData[key] += duration;
+            }
+        });
+        
+        let heatmapHTML = '<div class="heatmap-wrapper-github">';
+        
+        // Day labels on the left
+        heatmapHTML += '<div class="heatmap-left-labels">';
+        dayLabels.forEach(day => {
+            heatmapHTML += `<div class="heatmap-day-label-left">${day}</div>`;
+        });
+        heatmapHTML += '</div>';
+        
+        // Main heatmap grid
+        heatmapHTML += '<div class="heatmap-main-container">';
+        
+        // Month labels on top (every 4 columns)
+        heatmapHTML += '<div class="heatmap-top-labels">';
+        const today = new Date();
+        const sixMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate());
+        
+        for (let w = 0; w < weeksCount; w++) {
+            if (w % weeksPerMonth === 0) {
+                const monthIndex = (sixMonthsAgo.getMonth() + Math.floor(w / weeksPerMonth)) % 12;
+                heatmapHTML += `<div class="heatmap-month-label-spacer">${monthLabels[monthIndex]}</div>`;
+            } else {
+                heatmapHTML += `<div class="heatmap-month-label-spacer"></div>`;
+            }
+        }
+        heatmapHTML += '</div>';
+        
+        // Heatmap grid using CSS Grid (github style)
+        heatmapHTML += '<div class="heatmap-grid-github">';
+        
+        // Generate all cells in grid order (left to right, top to bottom)
+        let currentDate = new Date(sixMonthsAgo);
+        const startDay = currentDate.getDay();
+        currentDate.setDate(currentDate.getDate() - (startDay || 7) + 1);
+        
+        for (let week = 0; week < weeksCount; week++) {
+            for (let day = 0; day < daysPerWeek; day++) {
+                const dateStr = currentDate.toDateString();
+                const key = `${dateStr}-${day}`;
+                const minutes = activityData[key] || 0;
+                
+                let color = '#1f2937'; // No activity
+                if (minutes > 0 && minutes <= 30) {
+                    color = '#10b981'; // Light green
+                } else if (minutes > 30) {
+                    color = '#059669'; // Dark green
+                }
+                
+                heatmapHTML += `<div class="heatmap-cell" style="background-color: ${color};" title="${Math.round(minutes)} min"></div>`;
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
+        
+        heatmapHTML += '</div>';
+        heatmapHTML += '</div>';
+        heatmapHTML += '</div>';
+        heatmapContent.innerHTML = heatmapHTML;
+    };
+
+    // Get hourly study data for today
+    let todayChart = null;
+    
+    const getHourlyStudyData = () => {
+        const now = new Date();
+        const today = now.toDateString();
+        const hourlyData = new Array(24).fill(0);
+        
+        // Go through today's sessions and collect data
+        const todaysSessions = timer.getTodaysSessions();
+        todaysSessions.forEach(session => {
+            if (session.endTime) {
+                const hour = new Date(session.date).getHours();
+                const duration = (session.endTime - session.date) / 1000 / 60; // in minutes
+                hourlyData[hour] += duration;
+            }
+        });
+        
+        return hourlyData;
+    };
+
+    const displayHourlyChart = (hourlyData) => {
+        const chartCanvas = document.getElementById('todayChart');
+        const chartContainer = document.getElementById('todayChartContainer');
+        
+        if (!chartCanvas) {
+            console.error('Chart canvas not found');
+            return;
+        }
+        
+        if (!chartContainer) {
+            console.error('Chart container not found');
+            return;
+        }
+        
+        // Show the container
+        chartContainer.style.display = 'block';
+        
+        // Create time labels
+        const labels = [];
+        for (let i = 0; i < 24; i++) {
+            const period = i < 12 ? 'AM' : 'PM';
+            const displayHour = i === 0 ? 12 : (i > 12 ? i - 12 : i);
+            labels.push(`${displayHour}:00 ${period}`);
+        }
+        
+        // Convert minutes to hours for display
+        const dataInHours = hourlyData.map(minutes => parseFloat((minutes / 60).toFixed(2)));
+        
+        // Destroy existing chart if it exists
+        if (todayChart) {
+            todayChart.destroy();
+        }
+        
+        try {
+            // Get canvas context
+            const ctx = chartCanvas.getContext('2d');
+            
+            // Create new chart
+            todayChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Hours Studied',
+                        data: dataInHours,
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: true
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('Chart created successfully');
+            // Force chart resize
+            setTimeout(() => {
+                if (todayChart && todayChart.resize) {
+                    todayChart.resize();
+                }
+            }, 200);
+        } catch (error) {
+            console.error('Error creating chart:', error);
+        }
+    };
+
+    // Tab switching for stats
+    statsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            statsTabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.stats-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            tab.classList.add('active');
+            const tabName = tab.dataset.tab;
+            document.getElementById(`${tabName}StatsContainer`).classList.add('active');
+        });
+    });
+
+    statsBtn.addEventListener('click', showStatsModal);
+    closeStatsBtn.addEventListener('click', hideStatsModal);
+
+    // Close stats modal when clicking outside
+    statsModal.addEventListener('click', (e) => {
+        if (e.target === statsModal) {
+            hideStatsModal();
         }
     });
     
@@ -558,6 +974,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const oceanBg = document.getElementById('oceanBg');
     const oceanVideo = document.getElementById('oceanVideo');
     const rainVideo = document.getElementById('rainVideo');
+    const seaVideo = document.getElementById('seaVideo');
     const backgroundModal = document.getElementById('backgroundModal');
     const backgroundModalClose = document.getElementById('backgroundModalClose');
     const backgroundBtn = document.getElementById('backgroundBtn');
@@ -588,7 +1005,8 @@ document.addEventListener('DOMContentLoaded', () => {
         oceanBg.style.display = 'none';
         oceanVideo.style.display = 'none';
         rainVideo.style.display = 'none';
-        document.body.classList.remove('ocean-bg', 'ocean-video-bg', 'rain-video-bg');
+        seaVideo.style.display = 'none';
+        document.body.classList.remove('ocean-bg', 'ocean-video-bg', 'rain-video-bg', 'sea-video-bg');
         document.body.style.backgroundImage = 'none';
         
         // Stop tetris background
@@ -604,6 +1022,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rainVideo) {
             rainVideo.pause();
             rainVideo.currentTime = 0;
+        }
+        
+        // Pause sea video
+        if (seaVideo) {
+            seaVideo.pause();
+            seaVideo.currentTime = 0;
         }
         
         // Stop wave animations
@@ -637,6 +1061,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('rain-video-bg');
             rainVideo.style.display = 'block';
             rainVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'sea') {
+            // Sea video background - start playing
+            document.body.classList.add('sea-video-bg');
+            seaVideo.style.display = 'block';
+            seaVideo.play().catch(e => {
                 console.log('Video autoplay failed:', e);
             });
         }
