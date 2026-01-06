@@ -425,15 +425,15 @@ document.addEventListener('DOMContentLoaded', () => {
             currentAudio.crossOrigin = "anonymous";
         }
 
-        // Map sounds to local assets
+        // Map sounds to GitHub raw content URLs
         const soundMap = {
-            'rain': 'assets/mixkit-light-rain-loop-2393.wav',
-            'heavy-rain': 'assets/mixkit-heavy-rain-drops-2399.wav',
-            'wind': 'assets/mixkit-wind-blowing-ambience-2658.wav',
-            'waves': 'assets/mixkit-small-waves-harbor-rocks-1208.wav',
-            'birds': 'assets/mixkit-little-birds-singing-in-the-trees-17.wav',
-            'thunder': 'assets/mixkit-rain-and-thunder-storm-2390.wav',
-            'night': 'assets/mixkit-night-forest-with-insects-2414.wav'
+            'rain': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-light-rain-loop-2393.wav',
+            'heavy-rain': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-heavy-rain-drops-2399.wav',
+            'wind': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-wind-blowing-ambience-2658.wav',
+            'waves': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-small-waves-harbor-rocks-1208.wav',
+            'birds': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-little-birds-singing-in-the-trees-17.wav',
+            'thunder': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-rain-and-thunder-storm-2390.wav',
+            'night': 'https://raw.githubusercontent.com/Sou1lah/StudyFocus/main/assets/mixkit-night-forest-with-insects-2414.wav'
         };
 
         currentAudio.src = soundMap[soundType] || '';
