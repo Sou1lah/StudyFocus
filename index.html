@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyFocus - Focus Timer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <div class="main-container">
+        <!-- Title -->
+        <div class="brand-title">
+            <h1>StudyFocus</h1>
+        </div>
+        
+        <!-- Top Right Controls -->
+        <div class="top-right-controls">
+            <button class="control-icon-btn" id="musicBtn" title="Music">
+                <i class="fas fa-music"></i>
+            </button>
+            <button class="control-icon-btn" id="backgroundBtn" title="Background">
+                <i class="fas fa-image"></i>
+            </button>
+            <button class="control-icon-btn" id="weatherBtn" title="Weather">
+                <i class="fas fa-cloud"></i>
+            </button>
+        </div>
+
+        <!-- Timer Page -->
+        <div class="card-container timer-page active">
+            <button class="settings-btn" id="settingsBtn">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="content">
+                <div class="header-section">
+                </div>
+
+                <div class="mode-section">
+                    <div class="mode-buttons">
+                        <button class="mode-btn active" id="modeStudy" data-mode="study">
+                            <i class="fas fa-book"></i> Study
+                        </button>
+                        <button class="mode-btn" id="modeBreak" data-mode="break">
+                            <i class="fas fa-mug-hot"></i> Break
+                        </button>
+                        <button class="mode-btn" id="modeLongBreak" data-mode="longbreak">
+                            <i class="fas fa-star"></i> Long Break
+                        </button>
+                    </div>
+                </div>
+
+                <div class="timer-display-section">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                </div>
+
+                <div class="session-info">
+                    <p id="sessionStatus"></p>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="glass-btn btn-start" id="startBtn">
+                        <i class="fas fa-play"></i> <span id="startBtnText">Start</span>
+                    </button>
+                    <button class="glass-btn btn-reset" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <div class="footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-tab="focus-timer">
+                        <i class="fas fa-clock"></i> Focus Timer
+                    </button>
+                    <button class="modal-tab" data-tab="stopwatch">
+                        <i class="fas fa-stopwatch"></i> Stopwatch
+                    </button>
+                </div>
+                <button class="modal-close" id="closeSettingsBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-tab-content active" id="focus-timer-content">
+                    <div class="settings-section">
+                        <label class="settings-label">Preset:</label>
+                        <div class="preset-dropdown">
+                            <button class="preset-btn" id="presetDropdownBtn">
+                                <span id="presetLabel">Focus 60m · 10m · 15m</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="preset-menu" id="presetMenu">
+                                <div class="preset-item active" data-study="5400" data-break="600" data-longbreak="900">
+                                    Focus <span class="preset-time">60m · 10m · 15m</span>
+                                </div>
+                                <div class="preset-item" data-study="1500" data-break="300" data-longbreak="900">
+                                    Classic Pomodoro <span class="preset-time">25m · 5m · 15m</span>
+                                </div>
+                                <div class="preset-item" data-study="3000" data-break="600" data-longbreak="1800">
+                                    Extended Focus <span class="preset-time">50m · 10m · 30m</span>
+                                </div>
+                                <div class="preset-item" data-study="900" data-break="180" data-longbreak="600">
+                                    Quick Sessions <span class="preset-time">15m · 3m · 10m</span>
+                                </div>
+                                <div class="preset-item" data-study="5400" data-break="900" data-longbreak="2700">
+                                    Deep Work <span class="preset-time">90m · 15m · 45m</span>
+                                </div>
+                                <div class="preset-divider"></div>
+                                <div class="preset-item add-preset">
+                                    <i class="fas fa-plus"></i> Add Custom Preset
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="radio-group">
+                            <label class="radio-item active" id="countUpLabel">
+                                <input type="radio" name="timerMode" value="countdown" checked>
+                                <span class="radio-text">Count up time</span>
+                            </label>
+                            <label class="radio-item" id="deepFocusLabel">
+                                <input type="radio" name="timerMode" value="deepfocus">
+                                <span class="radio-text">Deep Focus</span>
+                                <span class="radio-desc">Requires study for...</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-tab-content" id="stopwatch-content">
+                    <div class="empty-message">
+                        Stopwatch settings coming soon
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon Modal -->
+    <div class="coming-soon-modal" id="comingSoonModal">
+        <div class="coming-soon-content">
+            <h2>Coming Soon</h2>
+            <p>This feature will be available soon!</p>
+            <button class="coming-soon-close" id="comingSoonClose">Close</button>
+        </div>
+    </div>
+
+    <audio id="notificationSound">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <script src="tetris-bg.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
