@@ -333,9 +333,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Coming Soon Modal functionality
-    const comingSoonModal = document.getElementById('comingSoonModal');
+    // Music Modal functionality
+    const musicModal = document.getElementById('musicModal');
     const musicBtn = document.getElementById('musicBtn');
+    const musicModalClose = document.getElementById('musicModalClose');
+
+    const showMusicModal = () => {
+        musicModal.classList.add('active');
+    };
+
+    const hideMusicModal = () => {
+        musicModal.classList.remove('active');
+    };
+
+    musicBtn.addEventListener('click', showMusicModal);
+    musicModalClose.addEventListener('click', hideMusicModal);
+
+    // Close music modal when clicking outside
+    musicModal.addEventListener('click', (e) => {
+        if (e.target === musicModal) {
+            hideMusicModal();
+        }
+    });
+
+    // Coming Soon Modal functionality for Background and Weather
+    const comingSoonModal = document.getElementById('comingSoonModal');
     const backgroundBtn = document.getElementById('backgroundBtn');
     const weatherBtn = document.getElementById('weatherBtn');
     const comingSoonClose = document.getElementById('comingSoonClose');
