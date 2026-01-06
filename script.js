@@ -461,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Track which external services were active before muting
-    let wasYouTubePlaying = false;
     let wasWeatherActive = false;
     
     // Mute button functionality will be initialized after focusSceneModal is defined
@@ -729,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentAudio.muted = isMuted;
         }
         
-        // Handle audio/music muting - mute all audio elements
+        // Handle audio/music muting - mute all audio elements including notification sounds
         const allAudioElements = document.querySelectorAll('audio');
         allAudioElements.forEach(audio => {
             audio.muted = isMuted;
@@ -738,28 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 audio.play().catch(e => console.log('Audio play error:', e));
             }
         });
-        
-        // Handle YouTube player (pause/resume)
-        const youtubeIframe = document.querySelector('iframe[src*="youtube"]');
-        if (youtubeIframe) {
-            if (isMuted) {
-                // Check if YouTube is playing and pause it
-                wasYouTubePlaying = true;
-                youtubeIframe.style.opacity = '0.5';
-                // Send pause command to YouTube iframe
-                youtubeIframe.contentWindow.postMessage(
-                    JSON.stringify({ event: 'command', func: 'pauseVideo' }),
-                    '*'
-                );
-            } else if (wasYouTubePlaying) {
-                // Resume YouTube if it was playing
-                youtubeIframe.style.opacity = '1';
-                youtubeIframe.contentWindow.postMessage(
-                    JSON.stringify({ event: 'command', func: 'playVideo' }),
-                    '*'
-                );
-            }
-        }
         
         // Handle Weather modal (close if open)
         if (isMuted && focusSceneModal.classList.contains('active')) {

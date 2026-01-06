@@ -529,11 +529,28 @@ body.focus-mode {
 }
 
 .focus-mode .settings-btn {
-    right: 30px;
+    display: none;
 }
 
 .focus-mode .focus-btn {
-    right: 110px;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+}
+
+.focus-mode .mute-btn {
+    position: fixed;
+    bottom: auto;
+    top: 20px;
+    right: 70px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
 }
 
 /* Ocean background for focus mode */
