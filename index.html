@@ -163,6 +163,76 @@
         </div>
     </div>
 
+    <!-- Coming Soon Modal -->
+    <div class="coming-soon-modal" id="comingSoonModal">
+        <div class="coming-soon-content">
+            <h2>Coming Soon</h2>
+            <p>This feature will be available soon!</p>
+            <button class="coming-soon-close" id="comingSoonClose">Close</button>
+        </div>
+    </div>
+
+    <!-- Focus Scene Modal -->
+    <div class="focus-scene-modal" id="focusSceneModal">
+        <div class="focus-scene-content">
+            <div class="focus-scene-header">
+                <h2>Set your focus scene</h2>
+                <button class="focus-scene-close" id="focusSceneClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="focus-scene-tabs">
+                <button class="focus-scene-tab active" data-tab="background">
+                    <i class="fas fa-image"></i> Background
+                </button>
+                <button class="focus-scene-tab" data-tab="weather">
+                    <i class="fas fa-cloud"></i> Weather
+                </button>
+            </div>
+            <div class="focus-scene-body">
+                <div class="scene-tab-content active" id="background-tab">
+                    <p style="text-align: center; color: rgba(255, 255, 255, 0.7);">Background options coming soon</p>
+                </div>
+                <div class="scene-tab-content" id="weather-tab">
+                    <div class="scene-grid">
+                        <div class="scene-item" data-sound="none" id="sceneNone">
+                            <div class="scene-icon"><i class="fas fa-ban"></i></div>
+                            <div class="scene-label">None</div>
+                        </div>
+                        <div class="scene-item" data-sound="rain">
+                            <div class="scene-icon"><i class="fas fa-cloud-rain"></i></div>
+                            <div class="scene-label">Rain</div>
+                        </div>
+                        <div class="scene-item" data-sound="heavy-rain">
+                            <div class="scene-icon"><i class="fas fa-cloud-rain"></i></div>
+                            <div class="scene-label">Heavy Rain</div>
+                        </div>
+                        <div class="scene-item" data-sound="wind">
+                            <div class="scene-icon"><i class="fas fa-wind"></i></div>
+                            <div class="scene-label">Wind</div>
+                        </div>
+                        <div class="scene-item" data-sound="waves">
+                            <div class="scene-icon"><i class="fas fa-water"></i></div>
+                            <div class="scene-label">Waves</div>
+                        </div>
+                        <div class="scene-item" data-sound="birds">
+                            <div class="scene-icon"><i class="fas fa-dove"></i></div>
+                            <div class="scene-label">Birds</div>
+                        </div>
+                        <div class="scene-item" data-sound="thunder">
+                            <div class="scene-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="scene-label">Thunder</div>
+                        </div>
+                        <div class="scene-item" data-sound="night">
+                            <div class="scene-icon"><i class="fas fa-moon"></i></div>
+                            <div class="scene-label">Night</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <audio id="notificationSound">
         <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
     </audio>

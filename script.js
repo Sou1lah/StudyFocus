@@ -361,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundBtn = document.getElementById('backgroundBtn');
     const weatherBtn = document.getElementById('weatherBtn');
     const comingSoonClose = document.getElementById('comingSoonClose');
+    const focusSceneModal = document.getElementById('focusSceneModal');
 
     const showComingSoon = () => {
         comingSoonModal.classList.add('active');
@@ -370,9 +371,16 @@ document.addEventListener('DOMContentLoaded', () => {
         comingSoonModal.classList.remove('active');
     };
 
-    musicBtn.addEventListener('click', showComingSoon);
+    const showFocusScene = () => {
+        focusSceneModal.classList.add('active');
+    };
+
+    const hideFocusScene = () => {
+        focusSceneModal.classList.remove('active');
+    };
+
     backgroundBtn.addEventListener('click', showComingSoon);
-    weatherBtn.addEventListener('click', showComingSoon);
+    weatherBtn.addEventListener('click', showFocusScene);
     comingSoonClose.addEventListener('click', hideComingSoon);
 
     // Close modal when clicking outside
@@ -381,4 +389,86 @@ document.addEventListener('DOMContentLoaded', () => {
             hideComingSoon();
         }
     });
+
+    // Focus Scene Modal functionality
+    const focusSceneClose = document.getElementById('focusSceneClose');
+    const focusSceneTabs = document.querySelectorAll('.focus-scene-tab');
+    const sceneTabContents = document.querySelectorAll('.scene-tab-content');
+    const sceneItems = document.querySelectorAll('.scene-item');
+
+    let currentAudio = null;
+    let currentSound = null;
+
+    focusSceneClose.addEventListener('click', hideFocusScene);
+
+    focusSceneModal.addEventListener('click', (e) => {
+        if (e.target === focusSceneModal) {
+            hideFocusScene();
+        }
+    });
+
+    // Tab switching
+    focusSceneTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            focusSceneTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            sceneTabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+    });
+
+    // Sound effects function
+    const playSound = (soundType) => {
+        // Stop current sound if playing
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        if (soundType === 'none') {
+            currentSound = null;
+            return;
+        }
+
+        // Create or reuse audio element
+        if (!currentAudio) {
+            currentAudio = new Audio();
+            currentAudio.loop = true;
+            currentAudio.crossOrigin = "anonymous";
+        }
+
+        // Map sounds to Mixkit URLs
+        const soundMap = {
+            'rain': 'https://assets.mixkit.co/active_storage/sfx/2380/2380-preview.mp3',
+            'heavy-rain': 'https://assets.mixkit.co/active_storage/sfx/2389/2389-preview.mp3',
+            'wind': 'https://assets.mixkit.co/active_storage/sfx/2424/2424-preview.mp3',
+            'waves': 'https://assets.mixkit.co/active_storage/sfx/2425/2425-preview.mp3',
+            'birds': 'https://assets.mixkit.co/active_storage/sfx/2437/2437-preview.mp3',
+            'thunder': 'https://assets.mixkit.co/active_storage/sfx/2419/2419-preview.mp3',
+            'night': 'https://assets.mixkit.co/active_storage/sfx/2469/2469-preview.mp3'
+        };
+
+        currentAudio.src = soundMap[soundType] || '';
+        currentSound = soundType;
+        currentAudio.volume = 0.5;
+        currentAudio.play().catch(e => {
+            console.log('Audio playback failed:', e);
+            // Fallback: show alert if audio fails
+            alert('Unable to load sound. Please check your internet connection.');
+        });
+    };
+
+    // Scene item selection
+    sceneItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const soundType = item.dataset.sound;
+            sceneItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            playSound(soundType);
+        });
+    });
+
+    // Mark "None" as active initially
+    document.getElementById('sceneNone').classList.add('active');
 });
