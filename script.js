@@ -115,9 +115,9 @@ class StudyTimer {
         this.takeLongBreakBtn.addEventListener('click', () => this.handleCompletionChoice('longbreak'));
         this.stopAlarmBtn.addEventListener('click', () => this.stopAlarm());
 
-        // Close completion modal when clicking outside
+        // Close completion modal when clicking on backdrop or outside
         document.addEventListener('click', (e) => {
-            if (e.target === this.timerCompletionModal) {
+            if (e.target === this.timerCompletionModal || e.target.classList.contains('modal-backdrop')) {
                 this.closeCompletionModal();
             }
         });
@@ -288,6 +288,12 @@ class StudyTimer {
 
         this.completionMessage.textContent = messages[this.currentMode];
         this.timerCompletionModal.style.display = 'flex';
+        
+        // Reset vanish animation for new cycle
+        const gifWrapper = document.querySelector('.alarm-gif-wrapper');
+        const stopBtn = document.querySelector('.stop-alarm-main');
+        if (gifWrapper) gifWrapper.classList.remove('vanish');
+        if (stopBtn) stopBtn.classList.remove('vanish');
         
         // Add vibration to stop alarm button
         this.stopAlarmBtn.classList.add('vibrating');
