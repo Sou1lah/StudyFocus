@@ -1471,6 +1471,11 @@ p {
     align-items: center;
     gap: 30px;
     text-align: center;
+    transition: gap 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alarm-display-container .alarm-gif-wrapper.vanish ~ * {
+    margin-top: -240px;
 }
 
 .alarm-gif-wrapper {
@@ -1510,6 +1515,12 @@ p {
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     min-width: 300px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alarm-display-container .alarm-gif-wrapper.vanish ~ .next-steps-container,
+.alarm-display-container .next-steps-container {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-header {
