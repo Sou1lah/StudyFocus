@@ -406,6 +406,294 @@ body.sea-video-bg .control-icon-btn:hover {
     border-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Fireplace Video Background */
+.fireplace-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.fireplace-video-bg {
+    background: transparent;
+}
+
+body.fireplace-video-bg .timer-display,
+body.fireplace-video-bg .session-info p,
+body.fireplace-video-bg .brand-title h1,
+body.fireplace-video-bg .mode-btn,
+body.fireplace-video-bg .glass-btn,
+body.fireplace-video-bg .tag-dropdown-btn,
+body.fireplace-video-bg .todo-list-title,
+body.fireplace-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.fireplace-video-bg .mode-btn,
+body.fireplace-video-bg .glass-btn,
+body.fireplace-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.fireplace-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.fireplace-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Forest 1 Video Background */
+.forest1-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.forest1-video-bg {
+    background: transparent;
+}
+
+body.forest1-video-bg .timer-display,
+body.forest1-video-bg .session-info p,
+body.forest1-video-bg .brand-title h1,
+body.forest1-video-bg .mode-btn,
+body.forest1-video-bg .glass-btn,
+body.forest1-video-bg .tag-dropdown-btn,
+body.forest1-video-bg .todo-list-title,
+body.forest1-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.forest1-video-bg .mode-btn,
+body.forest1-video-bg .glass-btn,
+body.forest1-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.forest1-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.forest1-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Fireplace 2 Video Background */
+.fireplace2-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.fireplace2-video-bg {
+    background: transparent;
+}
+
+body.fireplace2-video-bg .timer-display,
+body.fireplace2-video-bg .session-info p,
+body.fireplace2-video-bg .brand-title h1,
+body.fireplace2-video-bg .mode-btn,
+body.fireplace2-video-bg .glass-btn,
+body.fireplace2-video-bg .tag-dropdown-btn,
+body.fireplace2-video-bg .todo-list-title,
+body.fireplace2-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.fireplace2-video-bg .mode-btn,
+body.fireplace2-video-bg .glass-btn,
+body.fireplace2-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.fireplace2-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.fireplace2-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Forest 2 Video Background */
+.forest2-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.forest2-video-bg {
+    background: transparent;
+}
+
+body.forest2-video-bg .timer-display,
+body.forest2-video-bg .session-info p,
+body.forest2-video-bg .brand-title h1,
+body.forest2-video-bg .mode-btn,
+body.forest2-video-bg .glass-btn,
+body.forest2-video-bg .tag-dropdown-btn,
+body.forest2-video-bg .todo-list-title,
+body.forest2-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.forest2-video-bg .mode-btn,
+body.forest2-video-bg .glass-btn,
+body.forest2-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.forest2-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.forest2-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* City Video Background */
+.city-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.city-video-bg {
+    background: transparent;
+}
+
+body.city-video-bg .timer-display,
+body.city-video-bg .session-info p,
+body.city-video-bg .brand-title h1,
+body.city-video-bg .mode-btn,
+body.city-video-bg .glass-btn,
+body.city-video-bg .tag-dropdown-btn,
+body.city-video-bg .todo-list-title,
+body.city-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.city-video-bg .mode-btn,
+body.city-video-bg .glass-btn,
+body.city-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.city-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.city-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Sakura Video Background */
+.sakura-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+}
+
+body.sakura-video-bg {
+    background: transparent;
+}
+
+body.sakura-video-bg .timer-display,
+body.sakura-video-bg .session-info p,
+body.sakura-video-bg .brand-title h1,
+body.sakura-video-bg .mode-btn,
+body.sakura-video-bg .glass-btn,
+body.sakura-video-bg .tag-dropdown-btn,
+body.sakura-video-bg .todo-list-title,
+body.sakura-video-bg .todo-item-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.sakura-video-bg .mode-btn,
+body.sakura-video-bg .glass-btn,
+body.sakura-video-bg .tag-dropdown-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.sakura-video-bg .control-icon-btn {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+body.sakura-video-bg .control-icon-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
 /* Settings button */
 .settings-btn {
     position: absolute;
@@ -2252,6 +2540,27 @@ p {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     padding: 20px 0;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.background-options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.background-options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.background-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.background-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .background-option {

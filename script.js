@@ -1307,6 +1307,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const oceanVideo = document.getElementById('oceanVideo');
     const rainVideo = document.getElementById('rainVideo');
     const seaVideo = document.getElementById('seaVideo');
+    const fireplaceVideo = document.getElementById('fireplaceVideo');
+    const forest1Video = document.getElementById('forest1Video');
+    const fireplace2Video = document.getElementById('fireplace2Video');
+    const forest2Video = document.getElementById('forest2Video');
+    const cityVideo = document.getElementById('cityVideo');
+    const sakuraVideo = document.getElementById('sakuraVideo');
     const backgroundModal = document.getElementById('backgroundModal');
     const backgroundModalClose = document.getElementById('backgroundModalClose');
     const backgroundBtn = document.getElementById('backgroundBtn');
@@ -1338,7 +1344,13 @@ document.addEventListener('DOMContentLoaded', () => {
         oceanVideo.style.display = 'none';
         rainVideo.style.display = 'none';
         seaVideo.style.display = 'none';
-        document.body.classList.remove('ocean-bg', 'ocean-video-bg', 'rain-video-bg', 'sea-video-bg');
+        fireplaceVideo.style.display = 'none';
+        forest1Video.style.display = 'none';
+        fireplace2Video.style.display = 'none';
+        forest2Video.style.display = 'none';
+        cityVideo.style.display = 'none';
+        sakuraVideo.style.display = 'none';
+        document.body.classList.remove('ocean-bg', 'ocean-video-bg', 'rain-video-bg', 'sea-video-bg', 'fireplace-video-bg', 'forest1-video-bg', 'fireplace2-video-bg', 'forest2-video-bg', 'city-video-bg', 'sakura-video-bg');
         document.body.style.backgroundImage = 'none';
         
         // Stop tetris background
@@ -1360,6 +1372,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (seaVideo) {
             seaVideo.pause();
             seaVideo.currentTime = 0;
+        }
+        
+        // Pause new videos
+        if (fireplaceVideo) {
+            fireplaceVideo.pause();
+            fireplaceVideo.currentTime = 0;
+        }
+        if (forest1Video) {
+            forest1Video.pause();
+            forest1Video.currentTime = 0;
+        }
+        if (fireplace2Video) {
+            fireplace2Video.pause();
+            fireplace2Video.currentTime = 0;
+        }
+        if (forest2Video) {
+            forest2Video.pause();
+            forest2Video.currentTime = 0;
+        }
+        if (cityVideo) {
+            cityVideo.pause();
+            cityVideo.currentTime = 0;
+        }
+        if (sakuraVideo) {
+            sakuraVideo.pause();
+            sakuraVideo.currentTime = 0;
         }
         
         // Stop wave animations
@@ -1400,6 +1438,48 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('sea-video-bg');
             seaVideo.style.display = 'block';
             seaVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'fireplace') {
+            // Fireplace video background - start playing
+            document.body.classList.add('fireplace-video-bg');
+            fireplaceVideo.style.display = 'block';
+            fireplaceVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'forest1') {
+            // Forest 1 video background - start playing
+            document.body.classList.add('forest1-video-bg');
+            forest1Video.style.display = 'block';
+            forest1Video.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'fireplace2') {
+            // Fireplace 2 video background - start playing
+            document.body.classList.add('fireplace2-video-bg');
+            fireplace2Video.style.display = 'block';
+            fireplace2Video.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'forest2') {
+            // Forest 2 video background - start playing
+            document.body.classList.add('forest2-video-bg');
+            forest2Video.style.display = 'block';
+            forest2Video.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'city') {
+            // City video background - start playing
+            document.body.classList.add('city-video-bg');
+            cityVideo.style.display = 'block';
+            cityVideo.play().catch(e => {
+                console.log('Video autoplay failed:', e);
+            });
+        } else if (bgType === 'sakura') {
+            // Sakura video background - start playing
+            document.body.classList.add('sakura-video-bg');
+            sakuraVideo.style.display = 'block';
+            sakuraVideo.play().catch(e => {
                 console.log('Video autoplay failed:', e);
             });
         }
