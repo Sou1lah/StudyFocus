@@ -66,6 +66,7 @@ class StudyTimer {
         this.continueStudyBtn = document.getElementById('continueStudyBtn');
         this.takeBreakBtn = document.getElementById('takeBreakBtn');
         this.takeLongBreakBtn = document.getElementById('takeLongBreakBtn');
+        this.stopAlarmBtn = document.getElementById('stopAlarmBtn');
         this.completionTitle = document.getElementById('completionTitle');
         this.completionMessage = document.getElementById('completionMessage');
     }
@@ -115,6 +116,7 @@ class StudyTimer {
         this.continueStudyBtn.addEventListener('click', () => this.handleCompletionChoice('study'));
         this.takeBreakBtn.addEventListener('click', () => this.handleCompletionChoice('break'));
         this.takeLongBreakBtn.addEventListener('click', () => this.handleCompletionChoice('longbreak'));
+        this.stopAlarmBtn.addEventListener('click', () => this.stopAlarm());
 
         // Close completion modal when clicking outside
         document.addEventListener('click', (e) => {
@@ -303,9 +305,15 @@ class StudyTimer {
     }
 
     handleCompletionChoice(mode) {
+        this.stopAlarm();
         this.closeCompletionModal();
         this.switchMode(mode);
         this.reset();
+    }
+
+    stopAlarm() {
+        this.alarmSound.pause();
+        this.alarmSound.currentTime = 0;
     }
 
 
