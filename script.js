@@ -66,6 +66,7 @@ class StudyTimer {
         this.takeBreakBtn = document.getElementById('takeBreakBtn');
         this.takeLongBreakBtn = document.getElementById('takeLongBreakBtn');
         this.stopAlarmBtn = document.getElementById('stopAlarmBtn');
+        this.startStudyBtn = document.getElementById('startStudyBtn');
         this.completionMessage = document.getElementById('completionMessage');
     }
 
@@ -114,6 +115,7 @@ class StudyTimer {
         this.takeBreakBtn.addEventListener('click', () => this.handleCompletionChoice('break'));
         this.takeLongBreakBtn.addEventListener('click', () => this.handleCompletionChoice('longbreak'));
         this.stopAlarmBtn.addEventListener('click', () => this.stopAlarm());
+        this.startStudyBtn.addEventListener('click', () => this.handleBreakCompletion());
 
         // Close completion modal when clicking on backdrop or outside
         document.addEventListener('click', (e) => {
@@ -297,17 +299,41 @@ class StudyTimer {
         // Reset vanish animation for new cycle
         const gifWrapper = document.querySelector('.alarm-gif-wrapper');
         const stopBtn = document.querySelector('.stop-alarm-main');
-        if (gifWrapper) gifWrapper.classList.remove('vanish');
-        if (stopBtn) stopBtn.classList.remove('vanish');
+        const gifImg = document.querySelector('.alarm-gif');
+        const studyBtn = document.querySelector('.start-study-btn');
+        const nextStepsBtn = document.querySelector('.next-steps-container');
         
-        // Add vibration to stop alarm button
-        this.stopAlarmBtn.classList.add('vibrating');
-        this.stopAlarmBtn.disabled = false;
+        // Show different content based on mode
+        if (this.currentMode === 'break' || this.currentMode === 'longbreak') {
+            // Show study.gif and Start Studying button for breaks
+            if (gifImg) gifImg.src = './assets/study.gif';
+            if (gifWrapper) gifWrapper.classList.remove('vanish');
+            if (stopBtn) stopBtn.classList.add('vanish');
+            if (nextStepsBtn) nextStepsBtn.classList.add('vanish');
+            if (studyBtn) studyBtn.classList.remove('vanish');
+        } else {
+            // Show alarm.gif and Stop button for study completion
+            if (gifImg) gifImg.src = './assets/alarm.gif';
+            if (gifWrapper) gifWrapper.classList.remove('vanish');
+            if (stopBtn) stopBtn.classList.remove('vanish');
+            if (nextStepsBtn) nextStepsBtn.classList.remove('vanish');
+            if (studyBtn) studyBtn.classList.add('vanish');
+            
+            // Add vibration to stop alarm button
+            this.stopAlarmBtn.classList.add('vibrating');
+            this.stopAlarmBtn.disabled = false;
+        }
     }
 
     closeCompletionModal() {
         this.timerCompletionModal.style.display = 'none';
         this.stopAlarmBtn.classList.remove('vibrating');
+    }
+
+    handleBreakCompletion() {
+        this.closeCompletionModal();
+        this.switchMode('study');
+        this.reset();
     }
 
     handleCompletionChoice(mode) {
