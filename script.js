@@ -311,6 +311,7 @@ class StudyTimer {
         this.alarmSound.currentTime = 0;
         this.stopAlarmBtn.classList.remove('vibrating');
         this.stopAlarmBtn.disabled = true;
+        this.closeCompletionModal();
     }
 
 
