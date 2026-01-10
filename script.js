@@ -1060,8 +1060,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const customBreakTime = document.getElementById('customBreakTime');
     const customLongBreakTime = document.getElementById('customLongBreakTime');
     const addPresetBtn = document.querySelector('.add-preset');
-    
+    const MAX_CUSTOM_PRESETS = 3;
+
+    // Function to load custom presets from localStorage
+    function loadCustomPresetsFromStorage() {
+        const customPresets = JSON.parse(localStorage.getItem('customPresets')) || [];
+        const presetDivider = document.querySelector('.preset-divider');
+        
+        // Remove existing custom presets
+        document.querySelectorAll('.preset-item.custom-preset').forEach(item => item.remove());
+        
+        // Add custom presets to the menu
+        customPresets.forEach((preset, index) => {
+            const presetItem = document.createElement('div');
+            presetItem.className = 'preset-item custom-preset';
+            presetItem.setAttribute('data-study', preset.study);
+            presetItem.setAttribute('data-break', preset.breakTime);
+            presetItem.setAttribute('data-longbreak', preset.longbreak);
+            
+            const studyMin = preset.study / 60;
+            const breakMin = preset.breakTime / 60;
+            const longbreakMin = preset.longbreak / 60;
+            
+            presetItem.innerHTML = `
+                <span>${preset.name} <span class="preset-time">${studyMin}m · ${breakMin}m · ${longbreakMin}m</span></span>
+                <button class="preset-delete-btn" data-index="${index}" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer; font-size: 14px; padding: 0 5px;">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            `;
+            
+            presetDivider.parentElement.insertBefore(presetItem, presetDivider);
+        });
+        
+        // Reattach event listeners for custom presets
+        attachCustomPresetListeners();
+    }
+
+    // Function to attach event listeners to custom presets
+    function attachCustomPresetListeners() {
+        const customPresetItems = document.querySelectorAll('.preset-item.custom-preset');
+        
+        // Preset selection
+        customPresetItems.forEach(item => {
+            const deleteBtn = item.querySelector('.preset-delete-btn');
+            
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.preset-delete-btn')) return;
+                
+                document.querySelectorAll('.preset-item').forEach(p => p.classList.remove('active'));
+                item.classList.add('active');
+                
+                const study = parseInt(item.getAttribute('data-study'));
+                const breakTime = parseInt(item.getAttribute('data-break'));
+                const longbreak = parseInt(item.getAttribute('data-longbreak'));
+                
+                timer.modes.study = study;
+                timer.modes.break = breakTime;
+                timer.modes.longbreak = longbreak;
+                timer.currentMode = 'study';
+                timer.updateActiveModeButton();
+                timer.reset();
+                
+                const presetLabel = item.querySelector('span').textContent;
+                document.getElementById('presetLabel').textContent = presetLabel;
+                
+                presetMenu.classList.remove('active');
+            });
+            
+            // Delete button
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(deleteBtn.getAttribute('data-index'));
+                let customPresets = JSON.parse(localStorage.getItem('customPresets')) || [];
+                customPresets.splice(index, 1);
+                localStorage.setItem('customPresets', JSON.stringify(customPresets));
+                loadCustomPresetsFromStorage();
+            });
+        });
+    }
+
+    // Load custom presets on page load
+    loadCustomPresetsFromStorage();
+
     addPresetBtn.addEventListener('click', () => {
+        const customPresets = JSON.parse(localStorage.getItem('customPresets')) || [];
+        if (customPresets.length >= MAX_CUSTOM_PRESETS) {
+            alert(`Maximum ${MAX_CUSTOM_PRESETS} custom presets allowed. Please delete one first.`);
+            return;
+        }
         customPresetModal.classList.add('active');
         presetMenu.classList.remove('active');
     });
@@ -1091,8 +1177,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Save to localStorage
+        // Save to localStorage with max 3 limit
         let customPresets = JSON.parse(localStorage.getItem('customPresets')) || [];
+        if (customPresets.length >= MAX_CUSTOM_PRESETS) {
+            alert(`Maximum ${MAX_CUSTOM_PRESETS} custom presets allowed.`);
+            return;
+        }
+        
         customPresets.push({ name, study, breakTime, longbreak });
         localStorage.setItem('customPresets', JSON.stringify(customPresets));
         
@@ -1114,6 +1205,9 @@ document.addEventListener('DOMContentLoaded', () => {
         customLongBreakTime.value = '15';
         
         customPresetModal.classList.remove('active');
+        
+        // Reload custom presets in the menu
+        loadCustomPresetsFromStorage();
     });
     
 
