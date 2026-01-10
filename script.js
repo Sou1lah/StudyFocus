@@ -293,7 +293,6 @@ class StudyTimer {
             longbreak: 'Hope you had a good break!'
         };
 
-        this.completionMessage.textContent = messages[this.currentMode];
         this.timerCompletionModal.style.display = 'flex';
         
         // Reset vanish animation for new cycle
@@ -305,18 +304,18 @@ class StudyTimer {
         
         // Show different content based on mode
         if (this.currentMode === 'break' || this.currentMode === 'longbreak') {
-            // Show study.gif and Start Studying button for breaks
+            // Show study.gif and Go Back to Study button for breaks
             if (gifImg) gifImg.src = './assets/study.gif';
             if (gifWrapper) gifWrapper.classList.remove('vanish');
             if (stopBtn) stopBtn.classList.add('vanish');
             if (nextStepsBtn) nextStepsBtn.classList.add('vanish');
             if (studyBtn) studyBtn.classList.remove('vanish');
         } else {
-            // Show alarm.gif and Stop button for study completion
+            // Show alarm.gif and ONLY Stop button for study completion
             if (gifImg) gifImg.src = './assets/alarm.gif';
             if (gifWrapper) gifWrapper.classList.remove('vanish');
             if (stopBtn) stopBtn.classList.remove('vanish');
-            if (nextStepsBtn) nextStepsBtn.classList.remove('vanish');
+            if (nextStepsBtn) nextStepsBtn.classList.add('vanish');
             if (studyBtn) studyBtn.classList.add('vanish');
             
             // Add vibration to stop alarm button
@@ -331,6 +330,7 @@ class StudyTimer {
     }
 
     handleBreakCompletion() {
+        this.stopAlarm();
         this.closeCompletionModal();
         this.switchMode('study');
         this.reset();
@@ -353,6 +353,14 @@ class StudyTimer {
         const gifWrapper = document.querySelector('.alarm-gif-wrapper');
         if (gifWrapper) {
             gifWrapper.classList.add('vanish');
+        }
+        
+        // Show next move options only for study completion
+        if (this.currentMode === 'study') {
+            const nextStepsBtn = document.querySelector('.next-steps-container');
+            if (nextStepsBtn) {
+                nextStepsBtn.classList.remove('vanish');
+            }
         }
     }
 
@@ -566,9 +574,16 @@ class StudyTimer {
 
     getTodaysSessions() {
         const today = new Date().toDateString();
-        return this.sessionData.filter(session => {
-            const sessionDate = new Date(session.date).toDateString();
-            return sessionDate === today;
+        const todaysSessions = this.sessionData.filter(session => session.date === today);
+        
+        // Map session data with tag information
+        return todaysSessions.map(session => {
+            const tag = this.tags.find(t => t.id === session.tagId);
+            return {
+                tagName: tag ? tag.name : 'Untagged',
+                tagColor: tag ? tag.color : '#999',
+                duration: session.totalTime
+            };
         });
     }
 
@@ -693,55 +708,70 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsBtn = document.getElementById('statsBtn');
     const statsModal = document.getElementById('statsModal');
     const closeStatsBtn = document.getElementById('closeStatsBtn');
-    const todayStatsContainer = document.getElementById('todayStatsContainer');
-    const totalStatsContainer = document.getElementById('totalStatsContainer');
-    const todayStatsContent = document.getElementById('todayStatsContent');
-    const totalStatsContent = document.getElementById('totalStatsContent');
-    const statsTabs = document.querySelectorAll('.stats-tab');
 
     const showStatsModal = () => {
         updateStatsDisplay();
-        statsModal.classList.add('active');
+        if (statsModal) {
+            statsModal.classList.add('active');
+        }
     };
 
     const hideStatsModal = () => {
-        statsModal.classList.remove('active');
+        if (statsModal) {
+            statsModal.classList.remove('active');
+        }
     };
 
+    if (statsBtn) {
+        statsBtn.addEventListener('click', showStatsModal);
+    }
+    if (closeStatsBtn) {
+        closeStatsBtn.addEventListener('click', hideStatsModal);
+    }
+
     const updateStatsDisplay = () => {
-        // Update today's stats
-        const stats = timer.getStudyStatsByTag();
+        // Update today's stats table
+        const todaysSessions = timer.getTodaysSessions();
+        const statsTableBody = document.getElementById('statsTableBody');
+        const noSessionsMessage = document.getElementById('noSessionsMessage');
+        const totalTimeStudied = document.getElementById('totalTimeStudied');
         
-        // Create hourly chart data
-        const hourlyData = getHourlyStudyData();
-        
-        // Use setTimeout to ensure DOM is ready
-        setTimeout(() => {
-            displayHourlyChart(hourlyData);
-        }, 100);
-        
-        if (stats.length === 0) {
-            todayStatsContent.innerHTML = '<p style="text-align: center; color: #999; margin-top: 20px;">No study sessions yet today</p>';
+        if (todaysSessions.length === 0) {
+            statsTableBody.style.display = 'none';
+            document.querySelector('.stats-table tfoot').style.display = 'none';
+            noSessionsMessage.style.display = 'block';
         } else {
-            todayStatsContent.innerHTML = stats.map(stat => {
-                const hours = Math.floor(stat.totalTime / 3600);
-                const minutes = Math.floor((stat.totalTime % 3600) / 60);
-                const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+            statsTableBody.style.display = 'table-row-group';
+            document.querySelector('.stats-table tfoot').style.display = 'table-row-group';
+            noSessionsMessage.style.display = 'none';
+            
+            let totalSeconds = 0;
+            statsTableBody.innerHTML = todaysSessions.map((session, index) => {
+                const hours = Math.floor(session.duration / 3600);
+                const minutes = Math.floor((session.duration % 3600) / 60);
+                const durationStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                totalSeconds += session.duration;
                 
                 return `
-                    <div class="stat-item">
-                        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-                            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${stat.color};"></div>
-                            <span style="font-weight: 500;">${stat.name}</span>
-                        </div>
-                        <span style="color: #aaa;">${timeStr}</span>
-                    </div>
+                    <tr>
+                        <td>S${index + 1}</td>
+                        <td>
+                            <div class="tag-cell">
+                                <div class="tag-color" style="background-color: ${session.tagColor}"></div>
+                                <span>${session.tagName}</span>
+                            </div>
+                        </td>
+                        <td>${durationStr}</td>
+                    </tr>
                 `;
             }).join('');
+            
+            // Update total time
+            const totalHours = Math.floor(totalSeconds / 3600);
+            const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+            const totalStr = totalHours > 0 ? `${totalHours}h ${totalMinutes}m` : `${totalMinutes}m`;
+            totalTimeStudied.textContent = totalStr;
         }
-        
-        // Total stats - display stats cards and heatmap
-        displayTotalStats();
     };
 
     const displayTotalStats = () => {
@@ -1005,29 +1035,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Tab switching for stats
-    statsTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            statsTabs.forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.stats-tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            tab.classList.add('active');
-            const tabName = tab.dataset.tab;
-            document.getElementById(`${tabName}StatsContainer`).classList.add('active');
-        });
-    });
-
     statsBtn.addEventListener('click', showStatsModal);
     closeStatsBtn.addEventListener('click', hideStatsModal);
 
     // Close stats modal when clicking outside
-    statsModal.addEventListener('click', (e) => {
-        if (e.target === statsModal) {
-            hideStatsModal();
-        }
-    });
+    if (statsModal) {
+        statsModal.addEventListener('click', (e) => {
+            if (e.target === statsModal) {
+                hideStatsModal();
+            }
+        });
+    }
     
     // Focus Mode Toggle
     focusBtn.addEventListener('click', () => {

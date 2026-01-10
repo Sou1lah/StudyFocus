@@ -184,8 +184,8 @@
             <button class="glass-btn stop-alarm-main" id="stopAlarmBtn" style="background-color: #EF4444; font-size: 18px; padding: 18px 40px;">
                 <i class="fas fa-stop-circle"></i> Stop Alarm
             </button>
-            <button class="glass-btn start-study-btn glow-btn" id="startStudyBtn" style="background-color: #10B981; font-size: 18px; padding: 18px 40px; display: none;">
-                <i class="fas fa-play"></i> Start Studying
+            <button class="glass-btn start-study-btn glow-btn" id="startStudyBtn" style="background-color: #10B981; font-size: 18px; padding: 18px 40px;">
+                <i class="fas fa-play"></i> Go Back to Study
             </button>
             <div class="next-steps-container">
                 <p id="completionMessage" style="text-align: center; font-size: 14px; margin-bottom: 15px; opacity: 0.8;"></p>
@@ -206,35 +206,35 @@
 
     <!-- Stats Modal -->
     <div class="modal" id="statsModal">
-        <div class="modal-content" style="width: 800px; max-width: 90vw;">
+        <div class="modal-content" style="width: 900px; max-width: 95vw;">
             <div class="modal-header">
-                <h2>Study Stats</h2>
+                <h2>Today's Study Sessions</h2>
                 <button class="modal-close" id="closeStatsBtn">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="stats-tabs">
-                <button class="stats-tab active" data-tab="today">Today</button>
-                <button class="stats-tab" data-tab="total">Total</button>
-            </div>
             <div class="modal-body">
-                <div id="todayStatsContainer" class="stats-tab-content active">
-                    <div class="stats-window-title">Today's Stat</div>
-                    <div id="todayChartContainer" style="position: relative; height: 300px; width: 100%; margin-bottom: 20px; padding: 10px 0;">
-                        <canvas id="todayChart" width="400" height="300"></canvas>
-                    </div>
-                    <div id="todayStatsContent"></div>
-                </div>
-                <div id="totalStatsContainer" class="stats-tab-content">
-                    <div class="stats-window-title">Total Stat</div>
-                    <div id="totalStatsContent">
-                        <!-- Stats cards will be populated here -->
-                    </div>
-                    <div id="heatmapSection" style="margin-top: 30px;">
-                        <h3 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-fire"></i> Heatmap
-                        </h3>
-                        <div id="heatmapContent"></div>
+                <div id="statsTableContainer" style="overflow-x: auto; padding: 20px 0;">
+                    <table class="stats-table" id="statsTable">
+                        <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Tag/Subject</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTableBody">
+                            <!-- Sessions will be populated here -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: 700; border-top: 2px solid rgba(255, 255, 255, 0.2);">
+                                <td colspan="2">Total Time Studied</td>
+                                <td id="totalTimeStudied">0h 0m</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div id="noSessionsMessage" style="text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.6);">
+                        <p style="font-size: 16px;">No sessions yet. Start studying to see your stats!</p>
                     </div>
                 </div>
             </div>
