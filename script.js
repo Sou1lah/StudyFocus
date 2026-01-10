@@ -258,6 +258,7 @@ class StudyTimer {
         clearInterval(this.timerInterval);
         this.isRunning = false;
         this.startBtn.disabled = false;
+        this.startBtn.innerHTML = '<i class="fas fa-play"></i> <span id="startBtnText">Start</span>';
         this.timerDisplay.classList.remove('running');
 
         // Play alarm sound
@@ -274,6 +275,10 @@ class StudyTimer {
             }
             this.updateStats();
         }
+
+        // Reset timer to original time
+        this.timeLeft = this.modes[this.currentMode];
+        this.updateDisplay();
 
         // Show completion dialog
         this.showCompletionDialog();
