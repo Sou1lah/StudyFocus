@@ -310,8 +310,13 @@ class StudyTimer {
         this.alarmSound.pause();
         this.alarmSound.currentTime = 0;
         this.stopAlarmBtn.classList.remove('vibrating');
+        this.stopAlarmBtn.classList.add('vanish');
         this.stopAlarmBtn.disabled = true;
-        this.closeCompletionModal();
+        
+        const gifWrapper = document.querySelector('.alarm-gif-wrapper');
+        if (gifWrapper) {
+            gifWrapper.classList.add('vanish');
+        }
     }
 
 

@@ -1479,6 +1479,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .alarm-gif {
@@ -1491,6 +1492,14 @@ p {
 .stop-alarm-main {
     animation: vibrate 0.5s infinite;
     font-weight: 700;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alarm-gif-wrapper.vanish,
+.stop-alarm-main.vanish {
+    opacity: 0;
+    transform: translateX(100px);
+    pointer-events: none;
 }
 
 .next-steps-container {
