@@ -2,7 +2,7 @@ class StudyTimer {
     constructor() {
         // Timer configuration (in seconds)
         this.modes = {
-            study: 90 * 60,       // 90 minutes
+            study: 25 * 60,       // 25 minutes (Classic Pomodoro)
             break: 5 * 60,        // 5 minutes
             longbreak: 15 * 60    // 15 minutes
         };
@@ -38,6 +38,7 @@ class StudyTimer {
         this.modeLongBreakBtn = document.getElementById('modeLongBreak');
         this.sessionStatus = document.getElementById('sessionStatus');
         this.notificationSound = document.getElementById('notificationSound');
+        this.alarmSound = document.getElementById('alarmSound');
         this.dots = [
             document.getElementById('dot1'),
             document.getElementById('dot2'),
@@ -58,6 +59,15 @@ class StudyTimer {
         this.cancelAddTagBtn = document.getElementById('cancelAddTagBtn');
         this.colorOptions = document.querySelectorAll('.color-option');
         this.selectedTag = null;
+
+        // Timer completion modal elements
+        this.timerCompletionModal = document.getElementById('timerCompletionModal');
+        this.closeCompletionBtn = document.getElementById('closeCompletionBtn');
+        this.continueStudyBtn = document.getElementById('continueStudyBtn');
+        this.takeBreakBtn = document.getElementById('takeBreakBtn');
+        this.takeLongBreakBtn = document.getElementById('takeLongBreakBtn');
+        this.completionTitle = document.getElementById('completionTitle');
+        this.completionMessage = document.getElementById('completionMessage');
     }
 
     attachEventListeners() {
@@ -97,6 +107,19 @@ class StudyTimer {
         document.addEventListener('click', (e) => {
             if (e.target === this.addTagModal) {
                 this.closeAddTagModal();
+            }
+        });
+
+        // Timer completion modal listeners
+        this.closeCompletionBtn.addEventListener('click', () => this.closeCompletionModal());
+        this.continueStudyBtn.addEventListener('click', () => this.handleCompletionChoice('study'));
+        this.takeBreakBtn.addEventListener('click', () => this.handleCompletionChoice('break'));
+        this.takeLongBreakBtn.addEventListener('click', () => this.handleCompletionChoice('longbreak'));
+
+        // Close completion modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target === this.timerCompletionModal) {
+                this.closeCompletionModal();
             }
         });
     }
@@ -234,12 +257,12 @@ class StudyTimer {
         clearInterval(this.timerInterval);
         this.isRunning = false;
         this.startBtn.disabled = false;
-        this.pauseBtn.disabled = true;
         this.timerDisplay.classList.remove('running');
 
-        // Play notification sound
-        this.playNotification();
+        // Play alarm sound
+        this.playAlarmSound();
 
+        // Update stats if it's a study session
         if (this.currentMode === 'study') {
             this.sessionCount++;
             this.totalFocusTime += this.modes.study;
@@ -248,23 +271,41 @@ class StudyTimer {
             if (this.selectedTag) {
                 this.trackSessionByTag(this.selectedTag.id, this.modes.study);
             }
-            
-            this.showNotification('Great work! Take a break now.');
-            this.switchMode('break');
-        } else {
-            this.showNotification(`Break time's over! Ready to focus again?`);
-            // Alternate between short and long breaks
-            if (this.sessionCount % 4 === 0) {
-                this.switchMode('study');
-            } else {
-                this.switchMode('study');
-            }
+            this.updateStats();
         }
 
-        this.currentMode = this.modeSelect.value;
-        this.reset();
-        this.updateStats();
+        // Show completion dialog
+        this.showCompletionDialog();
     }
+
+    showCompletionDialog() {
+        const modeLabels = {
+            study: 'Study Session Completed',
+            break: 'Break Time Over',
+            longbreak: 'Long Break Over'
+        };
+
+        const messages = {
+            study: 'Great work! What would you like to do next?',
+            break: 'Ready to get back to studying?',
+            longbreak: 'Hope you had a good break!'
+        };
+
+        this.completionTitle.textContent = modeLabels[this.currentMode];
+        this.completionMessage.textContent = messages[this.currentMode];
+        this.timerCompletionModal.style.display = 'flex';
+    }
+
+    closeCompletionModal() {
+        this.timerCompletionModal.style.display = 'none';
+    }
+
+    handleCompletionChoice(mode) {
+        this.closeCompletionModal();
+        this.switchMode(mode);
+        this.reset();
+    }
+
 
     playNotification() {
         try {
@@ -288,6 +329,19 @@ class StudyTimer {
             console.log('Notification sound could not be played');
         }
     }
+
+    playAlarmSound() {
+        try {
+            // Play the iPhone alarm sound
+            this.alarmSound.currentTime = 0;
+            this.alarmSound.play().catch(error => {
+                console.log('Could not play alarm sound:', error);
+            });
+        } catch (e) {
+            console.log('Alarm sound could not be played');
+        }
+    }
+
 
     showNotification(message) {
         const badge = document.createElement('div');
@@ -500,6 +554,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // Audio variables
     let currentAudio = null;
     let currentSound = null;
+    let musicVolume = parseInt(localStorage.getItem('musicVolume')) || 70;
+    let weatherSoundVolume = parseInt(localStorage.getItem('weatherSoundVolume')) || 50;
+    let youtubePlayer = null;
+    
+    // Add Time and Skip button functionality
+    const addTimeBtn = document.getElementById('addTimeBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    
+    addTimeBtn.addEventListener('click', () => {
+        if (timer.isRunning || timer.timeLeft > 0) {
+            timer.timeLeft += 5 * 60; // Add 5 minutes
+            timer.updateDisplay();
+        }
+    });
+    
+    skipBtn.addEventListener('click', () => {
+        if (timer.currentMode === 'study') {
+            // If in study, go to break
+            timer.switchMode('break');
+        } else {
+            // If in break or long break, go to study
+            timer.switchMode('study');
+        }
+    });
     
     // Settings modal functionality
     const settingsBtn = document.getElementById('settingsBtn');
@@ -513,6 +591,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const presetMenu = document.getElementById('presetMenu');
     const presetItems = document.querySelectorAll('.preset-item:not(.add-preset)');
     const radioItems = document.querySelectorAll('.radio-item');
+    const musicVolumeSlider = document.getElementById('musicVolumeSlider');
+    const weatherVolumeSlider = document.getElementById('weatherVolumeSlider');
+    const musicVolumeValue = document.getElementById('musicVolumeValue');
+    const weatherVolumeValue = document.getElementById('weatherVolumeValue');
     
     // Open/Close Settings Modal
     settingsBtn.addEventListener('click', () => {
@@ -528,6 +610,34 @@ document.addEventListener('DOMContentLoaded', () => {
             settingsModal.classList.remove('active');
         }
     });
+    
+    // Volume Controls in Settings
+    // Volume Controls in Settings
+    musicVolumeSlider.addEventListener('input', (e) => {
+        musicVolume = parseInt(e.target.value);
+        musicVolumeValue.textContent = musicVolume + '%';
+        localStorage.setItem('musicVolume', musicVolume);
+        // Apply volume to YouTube player if available
+        if (youtubePlayer && typeof youtubePlayer.setVolume === 'function') {
+            youtubePlayer.setVolume(musicVolume);
+        }
+    });
+    
+    weatherVolumeSlider.addEventListener('input', (e) => {
+        weatherSoundVolume = parseInt(e.target.value);
+        weatherVolumeValue.textContent = weatherSoundVolume + '%';
+        localStorage.setItem('weatherSoundVolume', weatherSoundVolume);
+        // Apply volume to weather sounds if available
+        if (currentAudio && !currentAudio.paused) {
+            currentAudio.volume = weatherSoundVolume / 100;
+        }
+    });
+    
+    // Initialize sliders with saved values
+    musicVolumeSlider.value = musicVolume;
+    musicVolumeValue.textContent = musicVolume + '%';
+    weatherVolumeSlider.value = weatherSoundVolume;
+    weatherVolumeValue.textContent = weatherSoundVolume + '%';
     
     // Stats Modal functionality
     const statsBtn = document.getElementById('statsBtn');
@@ -940,13 +1050,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Radio button functionality
-    radioItems.forEach(item => {
-        item.addEventListener('click', () => {
-            radioItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-        });
+    // Custom Preset Modal functionality
+    const customPresetModal = document.getElementById('customPresetModal');
+    const closeCustomPresetBtn = document.getElementById('closeCustomPresetBtn');
+    const cancelCustomPresetBtn = document.getElementById('cancelCustomPresetBtn');
+    const saveCustomPresetBtn = document.getElementById('saveCustomPresetBtn');
+    const customPresetName = document.getElementById('customPresetName');
+    const customStudyTime = document.getElementById('customStudyTime');
+    const customBreakTime = document.getElementById('customBreakTime');
+    const customLongBreakTime = document.getElementById('customLongBreakTime');
+    const addPresetBtn = document.querySelector('.add-preset');
+    
+    addPresetBtn.addEventListener('click', () => {
+        customPresetModal.classList.add('active');
+        presetMenu.classList.remove('active');
     });
+    
+    closeCustomPresetBtn.addEventListener('click', () => {
+        customPresetModal.classList.remove('active');
+    });
+    
+    cancelCustomPresetBtn.addEventListener('click', () => {
+        customPresetModal.classList.remove('active');
+    });
+    
+    customPresetModal.addEventListener('click', (e) => {
+        if (e.target === customPresetModal) {
+            customPresetModal.classList.remove('active');
+        }
+    });
+    
+    saveCustomPresetBtn.addEventListener('click', () => {
+        const name = customPresetName.value.trim();
+        const study = parseInt(customStudyTime.value) * 60;
+        const breakTime = parseInt(customBreakTime.value) * 60;
+        const longbreak = parseInt(customLongBreakTime.value) * 60;
+        
+        if (!name) {
+            alert('Please enter a preset name');
+            return;
+        }
+        
+        // Save to localStorage
+        let customPresets = JSON.parse(localStorage.getItem('customPresets')) || [];
+        customPresets.push({ name, study, breakTime, longbreak });
+        localStorage.setItem('customPresets', JSON.stringify(customPresets));
+        
+        // Apply the preset immediately
+        timer.modes.study = study;
+        timer.modes.break = breakTime;
+        timer.modes.longbreak = longbreak;
+        timer.currentMode = 'study';
+        timer.updateActiveModeButton();
+        timer.reset();
+        
+        // Update UI
+        document.getElementById('presetLabel').textContent = `${name} ${customStudyTime.value}m · ${customBreakTime.value}m · ${customLongBreakTime.value}m`;
+        
+        // Reset form
+        customPresetName.value = '';
+        customStudyTime.value = '25';
+        customBreakTime.value = '5';
+        customLongBreakTime.value = '15';
+        
+        customPresetModal.classList.remove('active');
+    });
+    
+
 
     // Music Modal functionality
     const musicModal = document.getElementById('musicModal');
@@ -1140,7 +1310,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Mute button functionality - now that focusSceneModal is defined
+        // Mute button functionality - now that focusSceneModal is defined
     muteBtn.addEventListener('click', () => {
         isMuted = !isMuted;
         muteBtn.classList.toggle('muted', isMuted);
@@ -1168,6 +1338,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 audio.play().catch(e => console.log('Audio play error:', e));
             }
         });
+        
+        // Mute/Unmute YouTube Lofi player
+        if (youtubePlayer && typeof youtubePlayer.mute === 'function') {
+            if (isMuted) {
+                youtubePlayer.mute();
+            } else {
+                youtubePlayer.unMute();
+            }
+        }
         
         // Handle Weather modal (close if open)
         if (isMuted && focusSceneModal.classList.contains('active')) {
@@ -1215,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentAudio.src = soundMap[soundType] || '';
         currentSound = soundType;
-        currentAudio.volume = 0.5;
+        currentAudio.volume = weatherSoundVolume / 100;
         currentAudio.muted = window.soundMuted || false;
         currentAudio.play().catch(e => {
             console.log('Audio playback failed:', e);
@@ -1378,3 +1557,25 @@ document.addEventListener('DOMContentLoaded', () => {
     todos = [];
     displayTodos();
 });
+
+// YouTube IFrame Player API initialization - MUST be outside the main script scope
+window.onYouTubeIframeAPIReady = function() {
+    youtubePlayer = new YT.Player('lofiPlayer', {
+        width: '100%',
+        height: '400',
+        videoId: 'nv_2rz5BFDA',  // Lofi music video ID
+        playerVars: {
+            autoplay: 0,
+            controls: 1,
+            modestbranding: 1,
+            rel: 0,
+            showinfo: 0
+        },
+        events: {
+            onReady: function(event) {
+                // Set initial volume when player is ready
+                youtubePlayer.setVolume(musicVolume);
+            }
+        }
+    });
+};

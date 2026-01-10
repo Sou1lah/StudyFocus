@@ -1033,10 +1033,46 @@ p {
 }
 
 .btn-start,
-.btn-reset {
+.btn-reset,
+.btn-add-time,
+.btn-skip {
     min-width: 140px;
     padding: 16px 24px;
     font-size: 16px;
+}
+
+.btn-add-time,
+.btn-skip {
+    min-width: 50px;
+    padding: 12px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add-time {
+    background: rgba(59, 130, 246, 0.2);
+    border: 2px solid rgba(59, 130, 246, 0.4);
+    color: rgba(59, 130, 246, 0.9);
+}
+
+.btn-add-time:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+    color: rgba(59, 130, 246, 1);
+}
+
+.btn-skip {
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.4);
+    color: rgba(239, 68, 68, 0.9);
+}
+
+.btn-skip:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: rgba(239, 68, 68, 1);
 }
 
 /* Todo Add Quick Button */
@@ -1368,6 +1404,7 @@ p {
 .modal-content {
     width: 90%;
     max-width: 700px;
+    padding: 14px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -1377,6 +1414,7 @@ p {
     animation: modalSlide 0.4s ease-out;
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 @keyframes modalSlide {
@@ -1391,7 +1429,7 @@ p {
 }
 
 .modal-header {
-    padding: 20px 25px;
+    padding: 24px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1447,10 +1485,10 @@ p {
 }
 
 .modal-body {
-    padding: 25px;
-    color: rgba(255, 255, 255, 0.8);
+    padding: 32px;
+    color: rgba(255, 255, 255, 0.9);
     overflow-y: auto;
-    max-height: 400px;
+    max-height: calc(100vh - 220px);
 }
 
 /* Tag Input Styling */
@@ -1545,6 +1583,10 @@ p {
     margin-bottom: 25px;
 }
 
+.settings-section {
+    margin-bottom: 18px;
+}
+
 .settings-section:last-child {
     margin-bottom: 0;
 }
@@ -1555,6 +1597,75 @@ p {
     font-weight: 600;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 12px;
+}
+
+/* Sound Controls */
+.sound-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sound-control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sound-control-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.volume-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(74, 222, 128, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: rgba(74, 222, 128, 1);
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(74, 222, 128, 0.8);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: rgba(74, 222, 128, 1);
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.volume-value {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: right;
 }
 
 /* Preset Dropdown */
@@ -1584,10 +1695,10 @@ p {
 }
 
 .preset-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    position: fixed;
+    top: auto;
+    left: auto;
+    right: auto;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1597,6 +1708,7 @@ p {
     max-height: 300px;
     overflow-y: auto;
     display: none;
+    min-width: 400px;
 }
 
 .preset-menu.active {
