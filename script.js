@@ -192,7 +192,9 @@ class StudyTimer {
         this.updateSessionStatus();
 
         this.timerInterval = setInterval(() => {
-            this.timeLeft--;
+            if (this.timeLeft > 0) {
+                this.timeLeft--;
+            }
             this.updateDisplay();
 
             if (this.timeLeft <= 0) {
