@@ -176,29 +176,27 @@
 
     <!-- Timer Completion Modal -->
     <div class="modal" id="timerCompletionModal">
-        <div class="modal-content" style="width: 480px;">
-            <div class="modal-header">
-                <h2 id="completionTitle">Time's Up!</h2>
-                <button class="modal-close" id="closeCompletionBtn">
-                    <i class="fas fa-times"></i>
-                </button>
+        <div class="modal-backdrop"></div>
+        <div class="alarm-display-container">
+            <div class="alarm-gif-wrapper">
+                <img src="https://media.giphy.com/media/cO5HcjMHWc36SnRWP1/giphy.gif" alt="alarm" class="alarm-gif">
             </div>
-            <div class="modal-body">
-                <p id="completionMessage" style="text-align: center; font-size: 16px; margin-bottom: 20px;"></p>
-            </div>
-            <div class="modal-footer" style="display: flex; gap: 10px; flex-direction: column;">
-                <button class="glass-btn" id="continueStudyBtn" style="background-color: #3B82F6;">
-                    <i class="fas fa-book"></i> Continue Studying
-                </button>
-                <button class="glass-btn" id="takeBreakBtn" style="background-color: #10B981;">
-                    <i class="fas fa-mug-hot"></i> Take a Break
-                </button>
-                <button class="glass-btn" id="takeLongBreakBtn" style="background-color: #F59E0B;">
-                    <i class="fas fa-star"></i> Take a Long Break
-                </button>
-                <button class="glass-btn" id="stopAlarmBtn" style="background-color: #EF4444;">
-                    <i class="fas fa-stop-circle"></i> Stop Alarm
-                </button>
+            <button class="glass-btn stop-alarm-main" id="stopAlarmBtn" style="background-color: #EF4444; font-size: 18px; padding: 18px 40px;">
+                <i class="fas fa-stop-circle"></i> Stop Alarm
+            </button>
+            <div class="next-steps-container">
+                <p id="completionMessage" style="text-align: center; font-size: 14px; margin-bottom: 15px; opacity: 0.8;"></p>
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    <button class="glass-btn" id="continueStudyBtn" style="background-color: #3B82F6; opacity: 0.7;">
+                        <i class="fas fa-book"></i> Continue Studying
+                    </button>
+                    <button class="glass-btn" id="takeBreakBtn" style="background-color: #10B981; opacity: 0.7;">
+                        <i class="fas fa-mug-hot"></i> Take a Break
+                    </button>
+                    <button class="glass-btn" id="takeLongBreakBtn" style="background-color: #F59E0B; opacity: 0.7;">
+                        <i class="fas fa-star"></i> Take a Long Break
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -62,12 +62,10 @@ class StudyTimer {
 
         // Timer completion modal elements
         this.timerCompletionModal = document.getElementById('timerCompletionModal');
-        this.closeCompletionBtn = document.getElementById('closeCompletionBtn');
         this.continueStudyBtn = document.getElementById('continueStudyBtn');
         this.takeBreakBtn = document.getElementById('takeBreakBtn');
         this.takeLongBreakBtn = document.getElementById('takeLongBreakBtn');
         this.stopAlarmBtn = document.getElementById('stopAlarmBtn');
-        this.completionTitle = document.getElementById('completionTitle');
         this.completionMessage = document.getElementById('completionMessage');
     }
 
@@ -112,7 +110,6 @@ class StudyTimer {
         });
 
         // Timer completion modal listeners
-        this.closeCompletionBtn.addEventListener('click', () => this.closeCompletionModal());
         this.continueStudyBtn.addEventListener('click', () => this.handleCompletionChoice('study'));
         this.takeBreakBtn.addEventListener('click', () => this.handleCompletionChoice('break'));
         this.takeLongBreakBtn.addEventListener('click', () => this.handleCompletionChoice('longbreak'));
@@ -243,7 +240,7 @@ class StudyTimer {
 
     updateSessionStatus() {
         const modeLabels = {
-            study: 'Studying',
+            study: '',
             break: 'Taking a break',
             longbreak: 'Long break time'
         };
@@ -283,19 +280,12 @@ class StudyTimer {
     }
 
     showCompletionDialog() {
-        const modeLabels = {
-            study: 'Study Session Completed',
-            break: 'Break Time Over',
-            longbreak: 'Long Break Over'
-        };
-
         const messages = {
             study: 'Great work! What would you like to do next?',
             break: 'Ready to get back to studying?',
             longbreak: 'Hope you had a good break!'
         };
 
-        this.completionTitle.textContent = modeLabels[this.currentMode];
         this.completionMessage.textContent = messages[this.currentMode];
         this.timerCompletionModal.style.display = 'flex';
         
