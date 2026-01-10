@@ -298,10 +298,15 @@ class StudyTimer {
         this.completionTitle.textContent = modeLabels[this.currentMode];
         this.completionMessage.textContent = messages[this.currentMode];
         this.timerCompletionModal.style.display = 'flex';
+        
+        // Add vibration to stop alarm button
+        this.stopAlarmBtn.classList.add('vibrating');
+        this.stopAlarmBtn.disabled = false;
     }
 
     closeCompletionModal() {
         this.timerCompletionModal.style.display = 'none';
+        this.stopAlarmBtn.classList.remove('vibrating');
     }
 
     handleCompletionChoice(mode) {
@@ -314,6 +319,8 @@ class StudyTimer {
     stopAlarm() {
         this.alarmSound.pause();
         this.alarmSound.currentTime = 0;
+        this.stopAlarmBtn.classList.remove('vibrating');
+        this.stopAlarmBtn.disabled = true;
     }
 
 
